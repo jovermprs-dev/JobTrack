@@ -1,0 +1,23 @@
+# Añade HTTPS (Caddy) delante de la aplicación. Uso:
+#   docker compose -f compose.yaml -f compose.prod.yaml up -d --build
+# Requiere en .env: JOBTRACK_DOMAIN, JOBTRACK_SECURE_COOKIES=true y JOBTRACK_BIND=127.0.0.1
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      frontend:
+        condition: service_healthy
+    environment:
+      JOBTRACK_DOMAIN: ${JOBTRACK_DOMAIN:?Define JOBTRACK_DOMAIN en .env}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+
+volumes:
+  caddy-data:
+  caddy-config:

@@ -19,21 +19,21 @@ Monolito modular: SPA Angular + API REST Spring Boot + PostgreSQL. Sin microserv
 flowchart LR
   B[Navegador] -->|HTTPS| N[nginx: frontend + reverse proxy]
   N -->|/ estático| SPA[Angular build]
-  N -->|/api/*| API[Spring Boot :8080]
+  N -->|/api/*| API[Spring Boot]
   API --> DB[(PostgreSQL)]
   API -. Flyway .-> DB
 ```
 
 El navegador habla con **un solo origen**. nginx sirve la SPA y reenvía `/api` al backend. Consecuencias:
 sin CORS en producción, cookies `SameSite=Lax` suficientes y CSRF sencillo. En desarrollo, `ng serve` usa
-`proxy.conf.json` hacia `localhost:8080` para conservar el mismo modelo.
+`proxy.conf.json` hacia `localhost:8081` para conservar el mismo modelo.
 
 ## Backend: paquetes por funcionalidad
 
 ```
 com.jobtrack
 ├── common/      errores (ProblemDetail), utilidades
-├── config/      SecurityConfig, OpenApiConfig
+├── config/      SecurityConfig, ClockConfig
 ├── auth/        registro, login, logout, /me, cambio de contraseña
 ├── user/        entidad User, repositorio
 ├── offer/       ofertas, filtros, historial de estados, CSV
@@ -47,7 +47,7 @@ El `userId` **siempre** sale del `SecurityContext`, nunca del cliente; todos los
 
 ## Autenticación (decisión)
 
-Sesión de servidor con cookie `JSESSIONID` (HttpOnly, `SameSite=Lax`, `Secure` en producción), almacenada en
+Sesión de servidor con cookie `SESSION` (HttpOnly, `SameSite=Lax`, `Secure` en producción), almacenada en
 PostgreSQL con Spring Session JDBC (sobrevive a reinicios). CSRF mediante cookie `XSRF-TOKEN` legible por Angular, que
 reenvía la cabecera `X-XSRF-TOKEN` automáticamente. Nada sensible en `localStorage`. Contraseñas con BCrypt.
 
@@ -57,7 +57,7 @@ sequenceDiagram
   participant S as Spring
   A->>S: GET /api/v1/auth/me (401 si no hay sesión; fija cookie XSRF-TOKEN)
   A->>S: POST /api/v1/auth/login {email,password} + X-XSRF-TOKEN
-  S-->>A: 200 + Set-Cookie JSESSIONID (sesión regenerada)
+  S-->>A: 200 + Set-Cookie SESSION (sesión regenerada)
   A->>S: GET /api/v1/offers (cookie)
   A->>S: POST /api/v1/auth/logout
   S-->>A: 204 (sesión invalidada)
@@ -79,5 +79,5 @@ sequenceDiagram
 
 ## Entornos
 
-- `dev`: backend en 8080, Angular en 4200 con proxy, cookie no `Secure`.
+- `dev`: backend en 8081, Angular en 4200 con proxy, cookie no `Secure`.
 - `prod`: perfil Spring `prod`, cookie `Secure`, OpenAPI/Swagger deshabilitado por defecto, sin datos demo.

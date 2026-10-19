@@ -1,6 +1,6 @@
 # Contrato de la API (`/api/v1`)
 
-Documentación interactiva (solo dev): `http://localhost:8080/swagger-ui.html`, esquema en `/v3/api-docs`.
+Documentación interactiva (solo dev): `http://localhost:8081/swagger-ui.html`, esquema en `/v3/api-docs`.
 
 ## Convenciones
 
@@ -39,12 +39,12 @@ Documentación interactiva (solo dev): `http://localhost:8080/swagger-ui.html`, 
 | POST | `/offers/{id}/status` | `{status, note?}` → oferta actualizada; añade historial |
 | GET | `/offers/{id}/history` | Lista cronológica inversa de cambios |
 | GET | `/offers/{id}/compatibility` | Desglose de compatibilidad |
-| GET | `/offers/export` | CSV (`text/csv`) de todas las ofertas del usuario |
-| POST | `/offers/import?dryRun=true` | `multipart/form-data` `file`; `dryRun` valida sin guardar. Todo o nada |
+| GET | `/offers/export` | CSV UTF-8 (con BOM) de todas las ofertas del usuario. Columnas: `title,company,url,location,work_mode,published_date,detected_date,applied_date,salary_min,salary_max,currency,contract_type,working_hours,min_years_experience,skills(;),requirements,notes,description,status,favorite,compatibility_score` |
+| POST | `/offers/import?dryRun=true` | `multipart/form-data` `file` (UTF-8, ≤ 2 MB, ≤ 1000 filas). `dryRun=true` (por defecto) valida y devuelve vista previa; `dryRun=false` importa. Todo o nada: con errores devuelve `422` y no guarda nada. Respuesta: `{dryRun,totalRows,validRows,imported,errors:[{row,field,message}],preview[]}` |
 
 `Offer`: `id, title, company, description, url, location, workMode, publishedDate, detectedDate, appliedDate, salaryMin, salaryMax, currency, contractType, workingHours, minYearsExperience, skills[], requirements, notes, status, favorite, compatibilityScore, createdAt, updatedAt`.
 
-`Compatibility`: `{score: 0-100|null, sufficientInformation, dimensions:[{name, weight, available, earned, detail}], positives[], missing[], unknown[], disclaimer}`.
+`Compatibility`: `{score: 0-100|null, sufficientInformation, dimensions:[{key, label, weight, available, earned, detail}], positives[], missing[], unknown[], disclaimer}`.
 
 ## Perfil
 
@@ -65,7 +65,7 @@ Documentación interactiva (solo dev): `http://localhost:8080/swagger-ui.html`, 
   topCompatible:[{id,title,company,score}],
   recentActivity:[{offerId,title,company,fromStatus,toStatus,note,changedAt}] }
 ```
-Definiciones en [security-and-config.md](security-and-config.md#definiciones-de-métricas) y `docs/compatibility.md`.
+Definiciones en [security-and-config.md](security-and-config.md#definiciones-de-métricas); algoritmo en [compatibility.md](compatibility.md).
 
 ## Salud
 

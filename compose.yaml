@@ -44,7 +44,7 @@ services:
       backend:
         condition: service_healthy
     ports:
-      - "${JOBTRACK_HTTP_PORT:-8080}:8080"
+      - "${JOBTRACK_BIND:-0.0.0.0}:${JOBTRACK_HTTP_PORT:-8080}:8080"
 
 volumes:
   db-data:
