@@ -38,7 +38,7 @@ curl -I https://jobtrack.tu-dominio.com
 
 ## Variante con Traefik compartido
 
-Para un VPS donde Traefik ya publica 80/443 y enruta por etiquetas Docker (red externa `web`). No se usa Caddy: `compose.traefik.yaml` conecta el frontend a la red `web`, declara el router y el certificado (resolver `letsencrypt`) y añade HSTS y un límite de frecuencia al registro (`/api/auth/register`, 5/min por IP, que la app no limita por sí misma).
+Para un VPS donde Traefik ya publica 80/443 y enruta por etiquetas Docker (red externa `web`). No se usa Caddy: `compose.traefik.yaml` conecta el frontend a la red `web`, declara el router y el certificado (resolver `letsencrypt`) y añade HSTS y un límite de frecuencia al registro (`/api/v1/auth/register`, 5/min por IP, que la app no limita por sí misma).
 
 ```bash
 mkdir -p ~/apps/jobtrack && cd ~/apps/jobtrack     # código del repositorio dentro

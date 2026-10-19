@@ -28,7 +28,7 @@ services:
 
       # El registro es abierto y cada alta cuesta CPU de BCrypt (docs/security-and-config.md): se limita por IP.
       # La regla más larga tiene prioridad sobre la del router principal.
-      - "traefik.http.routers.jobtrack-register.rule=Host(`${JOBTRACK_DOMAIN}`) && Path(`/api/auth/register`)"
+      - "traefik.http.routers.jobtrack-register.rule=Host(`${JOBTRACK_DOMAIN}`) && Path(`/api/v1/auth/register`)"
       - "traefik.http.routers.jobtrack-register.entrypoints=websecure"
       - "traefik.http.routers.jobtrack-register.tls.certresolver=letsencrypt"
       - "traefik.http.routers.jobtrack-register.service=jobtrack"

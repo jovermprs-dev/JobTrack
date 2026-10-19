@@ -5,6 +5,8 @@ calcula la compatibilidad entre tu perfil y cada oferta y consulta estadísticas
 
 Proyecto de portfolio: Angular 22 + Spring Boot 4 (Java 21) + PostgreSQL 16, con Docker Compose, CI en GitHub Actions y pruebas de integración contra PostgreSQL real.
 
+**Demo en vivo:** https://jobtrack.sergiojover.dev (el registro está abierto; crea una cuenta para probarla). Desplegada en un VPS tras Traefik: ver [despliegue](docs/deployment.md#variante-con-traefik-compartido).
+
 ## Funcionalidades
 
 - Registro, inicio/cierre de sesión (cookie de sesión HttpOnly + CSRF) y cambio de contraseña.

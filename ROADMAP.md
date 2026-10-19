@@ -10,11 +10,12 @@ Leyenda: ✅ verificado · 🔄 en curso · ⬜ pendiente
 | 3 Frontend funcional | ✅ | 63 pruebas Vitest en verde; build de producción sin avisos |
 | 4 Calidad y experiencia | ✅ | E2E 15/15 en Chromium (escritorio y móvil); CSV; datos y sesión sobreviven a reinicios |
 | 5 Entrega profesional | ✅ | Instalación desde clon limpio siguiendo el README + E2E 15/15; CI y docs; revisiones de seguridad y accesibilidad aplicadas |
+| 6 Publicación y despliegue | ✅ | Repositorio en GitHub (privado); CI en el runner con backend, frontend y E2E en verde; desplegado en https://jobtrack.sergiojover.dev (VPS tras Traefik, TLS de Let's Encrypt); registro, sesión por cookie `Secure` y logout verificados por HTTPS |
 
 ## Pendiente / ideas futuras
 
-- Publicar en GitHub y comprobar que el workflow `CI` pasa en el runner (no se ha ejecutado fuera de local).
-- Despliegue real en un VPS (la guía está en `docs/deployment.md`; no desplegado).
+- Despliegue continuo: hoy se actualiza a mano (copiar el código y `build` + `up -d`, ver `docs/deployment.md`). Un workflow de GitHub Actions por SSH lo automatizaría.
+- Copia de seguridad programada de la BD en el VPS (el `pg_dump` está documentado, pero no hay cron).
 - Verificación de email y recuperación de contraseña (requiere un servicio de correo).
 - Limitador de login compartido entre réplicas; límite de frecuencia en el registro.
 - Sinónimos de competencias en la compatibilidad; recordatorios de seguimiento.
@@ -27,4 +28,4 @@ Leyenda: ✅ verificado · 🔄 en curso · ⬜ pendiente
 
 ## Fuera de alcance (v1)
 
-Login con Google, recuperación de contraseña por email, scraping de portales, despliegue real.
+Login con Google, recuperación de contraseña por email, scraping de portales.
