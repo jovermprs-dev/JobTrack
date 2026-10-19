@@ -24,7 +24,8 @@ Documentación interactiva (solo dev): `http://localhost:8081/swagger-ui.html`, 
 | GET | `/auth/me` | 200 `User` / 401 |
 | PUT | `/auth/password` | `{currentPassword, newPassword}` → 204 |
 
-`User = {id, email, displayName}`
+`User = {id, email, displayName, demo}`. `demo` es `true` solo en el [modo demo](security-and-config.md#modo-demo-instancia-pública-de-solo-lectura): instancia pública de solo lectura donde todo
+método distinto de `GET`/`HEAD`/`OPTIONS` (incluidos `/auth/*` salvo `GET /auth/me`) responde `403`, y no hace falta iniciar sesión.
 
 ## Ofertas
 

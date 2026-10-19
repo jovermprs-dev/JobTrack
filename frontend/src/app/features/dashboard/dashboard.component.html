@@ -4,10 +4,12 @@
       <h1>Hola, {{ auth.user()?.displayName }}</h1>
       <p>Este es el estado actual de tu búsqueda de empleo.</p>
     </div>
-    <div class="page-header__actions">
-      <a class="btn" routerLink="/ofertas" [queryParams]="{ status: 'APPLIED' }"><app-icon name="refresh" /> Actualizar candidatura</a>
-      <a class="btn btn--primary" routerLink="/ofertas/nueva"><app-icon name="plus" /> Nueva oferta</a>
-    </div>
+    @if (!auth.isDemo()) {
+      <div class="page-header__actions">
+        <a class="btn" routerLink="/ofertas" [queryParams]="{ status: 'APPLIED' }"><app-icon name="refresh" /> Actualizar candidatura</a>
+        <a class="btn btn--primary" routerLink="/ofertas/nueva"><app-icon name="plus" /> Nueva oferta</a>
+      </div>
+    }
   </header>
 
   @if (loading()) {

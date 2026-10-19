@@ -22,6 +22,7 @@ nav a.active, .who.active { background: var(--sidebar-active); color: #fff; box-
 
 .account { margin-top: auto; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: var(--s3); display: grid; gap: 2px; }
 .who { padding-block: var(--s2); }
+.who--static, .who--static:hover { cursor: default; background: transparent; }
 .who__text { display: grid; min-width: 0; line-height: 1.3; }
 .who__text strong { color: #fff; font-weight: 600; }
 .who__text .small { color: #93a0b5; }
@@ -44,3 +45,12 @@ nav a.active, .who.active { background: var(--sidebar-active); color: #fff; box-
   .scrim { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.5); z-index: 55; }
   .main { margin-left: 0; min-height: calc(100vh - var(--topbar-h)); }
 }
+
+.demo-banner {
+  display: grid; gap: var(--s1); padding: var(--s3) var(--s5); background: #fef3c7; color: #78350f; border-bottom: 1px solid #fcd34d;
+  font-size: var(--fs-sm); line-height: 1.5;
+}
+.demo-banner p { margin: 0; }
+.demo-banner a { color: #78350f; font-weight: 600; text-decoration: underline; }
+.demo-banner a:hover { color: #451a03; }
+@media (max-width: 1023px) { .demo-banner { padding-inline: var(--s4); } }

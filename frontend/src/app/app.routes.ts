@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard, guestGuard } from './core/auth.guard';
+import { authGuard, guestGuard, writableGuard } from './core/auth.guard';
 
 export const routes: Routes = [
   {
@@ -38,11 +38,13 @@ export const routes: Routes = [
       },
       {
         path: 'ofertas/nueva',
+        canActivate: [writableGuard],
         title: 'Nueva oferta · JobTrack',
         loadComponent: () => import('./features/offers/offer-form.component').then((m) => m.OfferFormComponent),
       },
       {
         path: 'ofertas/:id/editar',
+        canActivate: [writableGuard],
         title: 'Editar oferta · JobTrack',
         loadComponent: () => import('./features/offers/offer-form.component').then((m) => m.OfferFormComponent),
       },
@@ -63,6 +65,7 @@ export const routes: Routes = [
       },
       {
         path: 'cuenta',
+        canActivate: [writableGuard],
         title: 'Cuenta · JobTrack',
         loadComponent: () => import('./features/account/account.component').then((m) => m.AccountComponent),
       },

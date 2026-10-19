@@ -31,11 +31,21 @@
 | `JOBTRACK_HTTP_PORT` | no (`8080`) | Puerto publicado de la aplicación |
 | `JOBTRACK_BIND` | no (`0.0.0.0`) | Interfaz donde se publica la app; `127.0.0.1` tras un proxy TLS |
 | `JOBTRACK_SECURE_COOKIES` | no (`true` en compose) | `true` bajo HTTPS (cookies `Secure`). Con `false` en un servidor público las cookies viajarían sin cifrar |
+| `JOBTRACK_DEMO_MODE` | no (`false`) | `true` = [modo demo](#modo-demo-instancia-pública-de-solo-lectura): instancia pública de solo lectura, sin login ni registro y con datos ficticios |
 | `JOBTRACK_DB_URL/USER/PASSWORD` | solo fuera de compose | Perfil `prod` no tiene valores por defecto |
 | `SERVER_PORT` | no | Puerto del backend (8081 en dev, 8080 en `prod`) |
 
 Perfiles: sin perfil = desarrollo (cookies no `Secure`, Swagger activo, BD local `localhost:55432` con contraseña de desarrollo
-**solo válida en local**); `prod` = sin Swagger, cookies `Secure` por defecto, sin credenciales por defecto. No existen usuarios de demostración.
+**solo válida en local**); `prod` = sin Swagger, cookies `Secure` por defecto, sin credenciales por defecto. Fuera del modo demo no existen usuarios de demostración.
+
+## Modo demo (instancia pública de solo lectura)
+
+Con `JOBTRACK_DEMO_MODE=true` la aplicación sirve una **demostración pública** pensada para enseñar la idea sin exponer una superficie de ataque: cualquiera puede verla, nadie puede cambiar nada. Está apagado por defecto y no altera el funcionamiento normal.
+
+- **Solo lectura, forzada en el servidor** (`DemoModeSecurity`): todo método que no sea `GET`/`HEAD`/`OPTIONS` recibe `403` (RFC 9457) antes incluso de la comprobación CSRF. Incluye registro, login, logout, cambio de contraseña, crear/editar/borrar ofertas, cambios de estado, favoritas, importar CSV y editar el perfil. La regla es por método, no por ruta: un endpoint de escritura que se añada en el futuro queda bloqueado sin tocar nada. Ocultar botones en la interfaz es solo comodidad; la garantía está en el backend.
+- **Sin login ni sesiones**: cada petición se autentica como una cuenta de ejemplo (`demo@jobtrack.local`) con política sin estado. No se emite cookie de sesión y no hay registro, así que no hay cuentas ni contraseñas que atacar. La contraseña de esa cuenta es aleatoria y se descarta; el usuario sigue saliendo del `SecurityContext`, nunca del cliente.
+- **Datos ficticios** (`DemoDataSeeder`): al arrancar se recrea la cuenta con un perfil y 12 ofertas inventadas (empresas ficticias), con fechas relativas a hoy para que el panel y las estadísticas se vean vivos. Se vuelve a sembrar en cada arranque: reiniciar el backend refresca las fechas y descarta cualquier resto. `GET /api/v1/auth/me` devuelve `demo: true`, y la interfaz muestra un aviso y oculta los controles de escritura.
+- **Qué no cubre**: es de solo lectura, no de coste cero; cada `GET` consulta la BD, así que un proxy con límite de frecuencia sigue siendo recomendable. El export CSV está permitido (solo contiene datos de ejemplo). Las cuentas creadas **antes** de activar el modo demo siguen en la BD pero son inaccesibles mientras esté activo.
 
 ## Definiciones de métricas
 
@@ -49,6 +59,8 @@ Perfiles: sin perfil = desarrollo (cookies no `Secure`, Swagger activo, BD local
 - **Empresas con más candidaturas**: top 5 por nº de candidaturas enviadas (sin distinguir mayúsculas).
 
 ## Límites conocidos
+
+Los tres primeros puntos sobre cuentas, login y registro no aplican en [modo demo](#modo-demo-instancia-pública-de-solo-lectura) (no hay cuentas, ni login, ni registro).
 
 - Limitador de login en memoria (se pierde al reiniciar; no compartido entre réplicas) y por email: quien conozca un email puede bloquear los inicios de sesión de esa cuenta durante 15 min (denegación temporal, a cambio de no depender de la IP).
 - Registro abierto sin verificación de email ni CAPTCHA; sin recuperación de contraseña por email.

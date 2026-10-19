@@ -34,6 +34,8 @@ services:
       JOBTRACK_DB_PASSWORD: ${POSTGRES_PASSWORD}
       # Seguro por defecto (true). .env.example lo pone a false para uso local por http; ver docs/deployment.md.
       JOBTRACK_SECURE_COOKIES: ${JOBTRACK_SECURE_COOKIES:-true}
+      # true = instancia pública de solo lectura (sin login ni registro, datos de ejemplo). Ver docs/security-and-config.md.
+      JOBTRACK_DEMO_MODE: ${JOBTRACK_DEMO_MODE:-false}
     expose:
       - "8080"
     networks:

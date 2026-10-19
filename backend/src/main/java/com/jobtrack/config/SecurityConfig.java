@@ -1,11 +1,13 @@
 package com.jobtrack.config;
 
 import com.jobtrack.auth.AppUserDetailsService;
+import com.jobtrack.demo.DemoModeSecurity;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.session.autoconfigure.DefaultCookieSerializerCustomizer;
 import org.springframework.context.annotation.Bean;
@@ -57,7 +59,8 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http,
-            @Value("${jobtrack.security.secure-cookies}") boolean secureCookies) throws Exception {
+            @Value("${jobtrack.security.secure-cookies}") boolean secureCookies,
+            ObjectProvider<DemoModeSecurity> demoMode) throws Exception {
         // La cookie XSRF-TOKEN es legible por JS (Angular la reenvía en X-XSRF-TOKEN). El token no se renderiza
         // en cuerpos de respuesta, por lo que el manejador sin XOR es suficiente.
         CookieCsrfTokenRepository csrfRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
@@ -88,6 +91,8 @@ public class SecurityConfig {
                         .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
                         .anyRequest().authenticated());
+        // Solo existe con jobtrack.demo.enabled=true: instancia pública de solo lectura, sin login ni sesiones.
+        demoMode.ifAvailable(demo -> demo.apply(http));
         return http.build();
     }
 

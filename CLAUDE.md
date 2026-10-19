@@ -22,6 +22,7 @@ cd e2e && npm test                      # E2E Playwright contra http://localhost
 - Sesión por cookie HttpOnly + CSRF; nada de tokens en localStorage. No debilitar protecciones para que pasen tests.
 - «Desconocido» = `NULL`; no confundir con `0`/`false`. No inventar datos.
 - Frontend: componentes standalone, signals, formularios reactivos, SCSS con variables de `styles/_tokens.scss`. Sin librerías de UI/gráficos (SVG propio).
+- **Modo demo** (`JOBTRACK_DEMO_MODE=true`, `com.jobtrack.demo`): instancia pública de solo lectura; el servidor rechaza con 403 todo método que no sea de lectura. No añadas rutas que eludan ese filtro ni lo conviertas en una lista por ruta; la interfaz solo oculta controles.
 - Tests nuevos con cada funcionalidad; no desactivar ni borrar tests para que pase el build.
 
 ## Estructura

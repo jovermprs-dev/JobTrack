@@ -5,6 +5,7 @@ import { ActivatedRoute, Params, Router, RouterLink } from '@angular/router';
 import { Subject, catchError, debounceTime, merge, of, switchMap, tap } from 'rxjs';
 import { toApiError } from '../../core/api-error';
 import { ApiService } from '../../core/api.service';
+import { AuthService } from '../../core/auth.service';
 import { Offer, OfferFilters, Page, STATUS_LABELS, STATUS_ORDER, WORK_MODES, WORK_MODE_LABELS } from '../../core/models';
 import { ToastService } from '../../core/toast.service';
 import { formatDate, formatSalary } from '../../shared/format';
@@ -33,6 +34,8 @@ const SORTS = [
 })
 export class OfferListComponent implements OnInit {
   private readonly api = inject(ApiService);
+  /** En la demo de solo lectura no se ofrecen importar, crear ni marcar favoritas. */
+  protected readonly demo = inject(AuthService).isDemo;
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);

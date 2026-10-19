@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.util.Locale;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -40,9 +41,12 @@ public class AuthController {
     private final FindByIndexNameSessionRepository<?> sessions;
     private final SecurityContextHolderStrategy contextStrategy = SecurityContextHolder.getContextHolderStrategy();
     private final SecurityContextRepository contextRepository = new HttpSessionSecurityContextRepository();
+    private final boolean demoMode;
 
     public AuthController(AuthService authService, AuthenticationManager authenticationManager,
-            LoginAttemptService loginAttempts, FindByIndexNameSessionRepository<?> sessions) {
+            LoginAttemptService loginAttempts, FindByIndexNameSessionRepository<?> sessions,
+            @Value("${jobtrack.demo.enabled:false}") boolean demoMode) {
+        this.demoMode = demoMode;
         this.sessions = sessions;
         this.authService = authService;
         this.authenticationManager = authenticationManager;
@@ -112,7 +116,7 @@ public class AuthController {
         contextRepository.saveContext(context, http, response);
     }
 
-    private static UserResponse toResponse(AppUserPrincipal p) {
-        return new UserResponse(p.getId(), p.getEmail(), p.getDisplayName());
+    private UserResponse toResponse(AppUserPrincipal p) {
+        return new UserResponse(p.getId(), p.getEmail(), p.getDisplayName(), demoMode);
     }
 }

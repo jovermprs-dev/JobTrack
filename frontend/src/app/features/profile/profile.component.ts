@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@ang
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toApiError } from '../../core/api-error';
 import { ApiService } from '../../core/api.service';
+import { AuthService } from '../../core/auth.service';
 import { Profile, ProfileInput, WORK_MODES, WORK_MODE_LABELS, WorkMode } from '../../core/models';
 import { ToastService } from '../../core/toast.service';
 import { IconComponent } from '../../shared/icon.component';
@@ -18,6 +19,8 @@ const LEVELS = ['Nativo', 'C2', 'C1', 'B2', 'B1', 'A2', 'A1'];
 })
 export class ProfileComponent implements OnInit {
   private readonly api = inject(ApiService);
+  /** En la demo de solo lectura el formulario se muestra deshabilitado y sin botón de guardar. */
+  protected readonly demo = inject(AuthService).isDemo;
   private readonly toast = inject(ToastService);
 
   protected readonly workModes = WORK_MODES;
@@ -78,6 +81,7 @@ export class ProfileComponent implements OnInit {
     this.form.controls.languages.clear();
     p.languages.forEach((l) => this.addLanguage(l.language, l.level));
     this.updatedAt.set(p.updatedAt);
+    if (this.demo()) this.form.disable();
   }
 
   protected addLanguage(language = '', level = 'B2'): void {

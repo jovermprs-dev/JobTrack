@@ -23,12 +23,18 @@
         </p>
       </div>
       <div class="page-header__actions">
-        <button type="button" class="btn" [attr.aria-pressed]="o.favorite" (click)="toggleFavorite()">
-          <span class="star" [class.is-on]="o.favorite"><app-icon name="star" [filled]="o.favorite" /></span>
-          Favorita
-        </button>
-        <a class="btn" [routerLink]="['/ofertas', o.id, 'editar']"><app-icon name="edit" /> Editar</a>
-        <button type="button" class="btn btn--danger" (click)="remove()"><app-icon name="trash" /> Eliminar</button>
+        @if (demo()) {
+          @if (o.favorite) {
+            <span class="badge badge--plain"><span class="star is-on"><app-icon name="star" [filled]="true" [size]="16" /></span> Favorita</span>
+          }
+        } @else {
+          <button type="button" class="btn" [attr.aria-pressed]="o.favorite" (click)="toggleFavorite()">
+            <span class="star" [class.is-on]="o.favorite"><app-icon name="star" [filled]="o.favorite" /></span>
+            Favorita
+          </button>
+          <a class="btn" [routerLink]="['/ofertas', o.id, 'editar']"><app-icon name="edit" /> Editar</a>
+          <button type="button" class="btn btn--danger" (click)="remove()"><app-icon name="trash" /> Eliminar</button>
+        }
       </div>
     </header>
 
@@ -37,7 +43,9 @@
         <section class="card" aria-labelledby="status-h">
           <div class="card__title">
             <h2 id="status-h">Estado de la candidatura</h2>
-            <button type="button" class="btn btn--primary btn--sm" (click)="openStatus()"><app-icon name="refresh" [size]="16" /> Cambiar estado</button>
+            @if (!demo()) {
+              <button type="button" class="btn btn--primary btn--sm" (click)="openStatus()"><app-icon name="refresh" [size]="16" /> Cambiar estado</button>
+            }
           </div>
           <div class="row"><app-status-badge [status]="o.status" />
             @if (o.appliedDate) { <span class="muted small">Enviada el {{ date(o.appliedDate) }}</span> }

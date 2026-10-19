@@ -61,11 +61,15 @@
                       @for (l of levels; track l) { <option [value]="l">{{ l }}</option> }
                     </select>
                   </div>
-                  <button type="button" class="btn btn--ghost btn--icon" [attr.aria-label]="'Quitar idioma ' + (i + 1)" (click)="removeLanguage(i)"><app-icon name="trash" /></button>
+                  @if (!demo()) {
+                    <button type="button" class="btn btn--ghost btn--icon" [attr.aria-label]="'Quitar idioma ' + (i + 1)" (click)="removeLanguage(i)"><app-icon name="trash" /></button>
+                  }
                 </div>
               }
             </div>
-            <button type="button" class="btn btn--sm add" (click)="addLanguage()"><app-icon name="plus" [size]="16" /> Añadir idioma</button>
+            @if (!demo()) {
+              <button type="button" class="btn btn--sm add" (click)="addLanguage()"><app-icon name="plus" [size]="16" /> Añadir idioma</button>
+            }
           </div>
         </div>
       </fieldset>
@@ -105,9 +109,11 @@
         </div>
       </fieldset>
 
-      <div class="form-actions">
-        <button type="submit" class="btn btn--primary" [disabled]="saving()"><app-icon name="check" /> {{ saving() ? 'Guardando…' : 'Guardar perfil' }}</button>
-      </div>
+      @if (!demo()) {
+        <div class="form-actions">
+          <button type="submit" class="btn btn--primary" [disabled]="saving()"><app-icon name="check" /> {{ saving() ? 'Guardando…' : 'Guardar perfil' }}</button>
+        </div>
+      }
     </form>
   }
 </div>

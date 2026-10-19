@@ -49,6 +49,7 @@ cp .env.example .env && chmod 600 .env
 #   JOBTRACK_BIND=127.0.0.1                  # el puerto publicado queda solo en loopback
 #   JOBTRACK_HTTP_PORT=18080                 # evita chocar con otros proyectos del servidor
 #   JOBTRACK_DOMAIN=jobtrack.tu-dominio.com  # con un registro DNS (o comodín *.) hacia el VPS
+#   JOBTRACK_DEMO_MODE=true                  # solo si es una demo pública: solo lectura, sin login ni registro
 docker compose -f compose.yaml -f compose.traefik.yaml build backend    # uno a uno: dos compilaciones a la vez
 docker compose -f compose.yaml -f compose.traefik.yaml build frontend   # pueden agotar la RAM de un VPS pequeño
 docker compose -f compose.yaml -f compose.traefik.yaml up -d
@@ -56,6 +57,7 @@ docker compose -f compose.yaml -f compose.traefik.yaml up -d
 
 Notas:
 
+- **Demo pública**: con `JOBTRACK_DEMO_MODE=true` la instancia es de solo lectura, sin login ni registro y con datos ficticios (ver [modo demo](security-and-config.md#modo-demo-instancia-pública-de-solo-lectura)). Es la configuración recomendada para enseñar el proyecto en un portafolio. Al activarla o desactivarla basta con `up -d`; los datos reales del volumen no se tocan.
 - **Memoria**: el override limita los contenedores (BD 384 MB, backend 640 MB, nginx 64 MB) para no competir con el resto de proyectos; el heap de la JVM se ajusta al límite del backend.
 - **Alias de red**: nginx llega al backend por el alias `jobtrack-backend`, no por `backend`. Los proyectos que siguen la plantilla de la infraestructura también tienen un servicio `backend` en la red `web`, y el nombre genérico podría resolver al contenedor de otro proyecto.
 - **Actualizar**: sustituye el código (por ejemplo `git archive HEAD | ssh vps 'tar -x -C ~/apps/jobtrack'`) y repite `build` + `up -d`. Los datos viven en el volumen `jobtrack_db-data` y sobreviven.

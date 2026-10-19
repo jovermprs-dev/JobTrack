@@ -14,6 +14,8 @@ export class AuthService {
 
   readonly user = this._user.asReadonly();
   readonly isAuthenticated = computed(() => this._user() !== null);
+  /** Instancia pública de solo lectura: el servidor ya rechaza toda escritura; la interfaz solo evita ofrecerla. */
+  readonly isDemo = computed(() => this._user()?.demo === true);
 
   /** Consulta la sesión al arrancar (también obtiene la cookie XSRF-TOKEN). */
   async restore(): Promise<void> {

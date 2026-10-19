@@ -6,10 +6,14 @@
     </div>
     <div class="page-header__actions">
       @if (!favoritesOnly()) {
-        <button type="button" class="btn" (click)="importOpen.set(true)"><app-icon name="upload" /> Importar CSV</button>
+        @if (!demo()) {
+          <button type="button" class="btn" (click)="importOpen.set(true)"><app-icon name="upload" /> Importar CSV</button>
+        }
         <button type="button" class="btn" [disabled]="exporting()" (click)="exportCsv()"><app-icon name="download" /> Exportar CSV</button>
       }
-      <a class="btn btn--primary" routerLink="/ofertas/nueva"><app-icon name="plus" /> Nueva oferta</a>
+      @if (!demo()) {
+        <a class="btn btn--primary" routerLink="/ofertas/nueva"><app-icon name="plus" /> Nueva oferta</a>
+      }
     </div>
   </header>
 
@@ -122,10 +126,16 @@
               </div>
               <div class="offer__side">
                 <app-status-badge [status]="o.status" />
-                <button type="button" class="btn btn--ghost btn--icon btn--sm" [attr.aria-pressed]="o.favorite"
-                  [attr.aria-label]="'Favorita: ' + o.title" (click)="toggleFavorite(o)">
-                  <span class="star" [class.is-on]="o.favorite"><app-icon name="star" [filled]="o.favorite" [size]="20" /></span>
-                </button>
+                @if (demo()) {
+                  @if (o.favorite) {
+                    <span class="star is-on" role="img" [attr.aria-label]="'Favorita: ' + o.title"><app-icon name="star" [filled]="true" [size]="20" /></span>
+                  }
+                } @else {
+                  <button type="button" class="btn btn--ghost btn--icon btn--sm" [attr.aria-pressed]="o.favorite"
+                    [attr.aria-label]="'Favorita: ' + o.title" (click)="toggleFavorite(o)">
+                    <span class="star" [class.is-on]="o.favorite"><app-icon name="star" [filled]="o.favorite" [size]="20" /></span>
+                  </button>
+                }
               </div>
             </li>
           }

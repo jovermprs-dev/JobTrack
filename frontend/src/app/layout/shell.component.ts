@@ -3,6 +3,7 @@ import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } fro
 import { filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '../core/auth.service';
+import { DEMO_LINKS } from '../core/demo';
 import { IconComponent } from '../shared/icon.component';
 
 @Component({
@@ -16,6 +17,7 @@ import { IconComponent } from '../shared/icon.component';
 export class ShellComponent {
   protected readonly auth = inject(AuthService);
   protected readonly menuOpen = signal(false);
+  protected readonly demoLinks = DEMO_LINKS;
 
   protected readonly nav = [
     { path: '/dashboard', label: 'Panel', icon: 'dashboard' },

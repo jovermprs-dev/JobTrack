@@ -28,17 +28,39 @@
   </nav>
 
   <div class="account">
-    <a class="who" routerLink="/cuenta" routerLinkActive="active" ariaCurrentWhenActive="page" aria-label="Mi cuenta">
-      <span class="avatar" aria-hidden="true">{{ auth.user()?.displayName?.charAt(0)?.toUpperCase() }}</span>
-      <span class="who__text">
-        <strong class="truncate">{{ auth.user()?.displayName }}</strong>
-        <span class="truncate small">{{ auth.user()?.email }}</span>
-      </span>
-    </a>
-    <button type="button" class="logout" (click)="logout()"><app-icon name="logout" /> Cerrar sesión</button>
+    @if (auth.isDemo()) {
+      <div class="who who--static">
+        <span class="avatar" aria-hidden="true">D</span>
+        <span class="who__text">
+          <strong class="truncate">Demostración</strong>
+          <span class="truncate small">Solo lectura</span>
+        </span>
+      </div>
+    } @else {
+      <a class="who" routerLink="/cuenta" routerLinkActive="active" ariaCurrentWhenActive="page" aria-label="Mi cuenta">
+        <span class="avatar" aria-hidden="true">{{ auth.user()?.displayName?.charAt(0)?.toUpperCase() }}</span>
+        <span class="who__text">
+          <strong class="truncate">{{ auth.user()?.displayName }}</strong>
+          <span class="truncate small">{{ auth.user()?.email }}</span>
+        </span>
+      </a>
+      <button type="button" class="logout" (click)="logout()"><app-icon name="logout" /> Cerrar sesión</button>
+    }
   </div>
 </aside>
 
 <main id="main" class="main" tabindex="-1">
+  @if (auth.isDemo()) {
+    <aside class="demo-banner" aria-label="Aviso de demostración">
+      <p>
+        <strong>Modo demostración.</strong> Los datos son ficticios y la aplicación es de solo lectura: no se puede crear, editar ni eliminar nada.
+      </p>
+      <p>
+        ¿Quieres usarla completa? Descarga el
+        <a [href]="demoLinks.repository" target="_blank" rel="noopener noreferrer">repositorio en GitHub</a> y despliégala en local, o
+        <a [href]="demoLinks.portfolio" target="_blank" rel="noopener noreferrer">escríbeme desde mi portafolio</a>.
+      </p>
+    </aside>
+  }
   <router-outlet />
 </main>

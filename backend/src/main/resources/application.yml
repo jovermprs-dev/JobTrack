@@ -58,3 +58,6 @@ jobtrack:
   auth:
     max-failed-logins: 5
     lockout-minutes: 15
+  demo:
+    # true = instancia pública de solo lectura: sin login ni registro, con datos de ejemplo (ver docs/security-and-config.md).
+    enabled: ${JOBTRACK_DEMO_MODE:false}

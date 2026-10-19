@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { catchError, forkJoin, of } from 'rxjs';
 import { toApiError } from '../../core/api-error';
 import { ApiService } from '../../core/api.service';
+import { AuthService } from '../../core/auth.service';
 import { ConfirmService } from '../../core/confirm.service';
 import { Compatibility, HistoryEntry, Offer, OfferStatus, STATUS_LABELS, STATUS_ORDER, WORK_MODE_LABELS } from '../../core/models';
 import { ToastService } from '../../core/toast.service';
@@ -22,6 +23,8 @@ import { StatusBadgeComponent } from '../../shared/status-badge.component';
 })
 export class OfferDetailComponent implements OnInit {
   private readonly api = inject(ApiService);
+  /** En la demo de solo lectura no se ofrecen acciones de escritura. */
+  protected readonly demo = inject(AuthService).isDemo;
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
   private readonly confirm = inject(ConfirmService);

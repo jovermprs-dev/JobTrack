@@ -44,6 +44,8 @@ export interface User {
   id: string;
   email: string;
   displayName: string;
+  /** true en la instancia pública de solo lectura (modo demo): sin login y sin escritura. */
+  demo?: boolean;
 }
 
 export interface Offer {

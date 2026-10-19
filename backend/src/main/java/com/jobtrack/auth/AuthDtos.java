@@ -30,6 +30,7 @@ public final class AuthDtos {
             @Size(min = 10, max = 72, message = "La contraseña debe tener entre 10 y 72 caracteres") String newPassword) {
     }
 
-    public record UserResponse(UUID id, String email, String displayName) {
+    /** {@code demo}: la sesión es la cuenta de ejemplo de una instancia pública de solo lectura (modo demo). */
+    public record UserResponse(UUID id, String email, String displayName, boolean demo) {
     }
 }

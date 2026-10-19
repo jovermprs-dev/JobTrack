@@ -11,6 +11,7 @@ Leyenda: ✅ verificado · 🔄 en curso · ⬜ pendiente
 | 4 Calidad y experiencia | ✅ | E2E 15/15 en Chromium (escritorio y móvil); CSV; datos y sesión sobreviven a reinicios |
 | 5 Entrega profesional | ✅ | Instalación desde clon limpio siguiendo el README + E2E 15/15; CI y docs; revisiones de seguridad y accesibilidad aplicadas |
 | 6 Publicación y despliegue | ✅ | Repositorio en GitHub (privado); CI en el runner con backend, frontend y E2E en verde; desplegado en https://jobtrack.sergiojover.dev (VPS tras Traefik, TLS de Let's Encrypt); registro, sesión por cookie `Secure` y logout verificados por HTTPS |
+| 7 Modo demo público | ✅ | `JOBTRACK_DEMO_MODE=true`: solo lectura forzada en el servidor, sin login ni registro, datos ficticios; pruebas de integración y de interfaz. La demo desplegada usa este modo |
 
 ## Pendiente / ideas futuras
 
