@@ -3,7 +3,7 @@
     <div class="loading"><span class="spinner"></span> Cargando oferta…</div>
   } @else if (error()) {
     <div class="card empty">
-      <h3>No se pudo cargar la oferta</h3>
+      <h2>No se pudo cargar la oferta</h2>
       <p>{{ error() }}</p>
       <div class="row center">
         <button type="button" class="btn btn--primary" (click)="load()"><app-icon name="refresh" /> Reintentar</button>
@@ -25,7 +25,7 @@
       <div class="page-header__actions">
         <button type="button" class="btn" [attr.aria-pressed]="o.favorite" (click)="toggleFavorite()">
           <span class="star" [class.is-on]="o.favorite"><app-icon name="star" [filled]="o.favorite" /></span>
-          {{ o.favorite ? 'Favorita' : 'Marcar favorita' }}
+          Favorita
         </button>
         <a class="btn" [routerLink]="['/ofertas', o.id, 'editar']"><app-icon name="edit" /> Editar</a>
         <button type="button" class="btn btn--danger" (click)="remove()"><app-icon name="trash" /> Eliminar</button>
@@ -109,6 +109,8 @@
               <a routerLink="/perfil" class="small">Completa tu perfil profesional</a>
             }
             <p class="muted small disclaimer">{{ c.disclaimer }}</p>
+          } @else {
+            <p class="muted">No se pudo calcular la compatibilidad en este momento.</p>
           }
         </section>
 

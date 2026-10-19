@@ -112,4 +112,30 @@ describe('OfferListComponent', () => {
     expect(req.request.params.get('page')).toBe('1');
     await flush(req, makePage([makeOffer({ id: 'o2' })], { page: 1, totalElements: 45, totalPages: 3 }));
   });
+
+  it('conserva los espacios finales mientras se escribe en el buscador', async () => {
+    setup();
+    await flush(listRequest(), makePage([makeOffer()]));
+    const q = fixture.nativeElement.querySelector('#f-q') as HTMLInputElement;
+    q.value = 'senior ';
+    q.dispatchEvent(new Event('input'));
+    await new Promise((r) => setTimeout(r, 400));
+    const req = listRequest();
+    expect(req.request.params.get('q')).toBe('senior');
+    await flush(req, makePage([makeOffer()]));
+    expect(q.value).toBe('senior ');
+  });
+
+  it('si la página pedida queda vacía retrocede a la última con datos', async () => {
+    setup();
+    await flush(listRequest(), makePage([makeOffer()], { totalElements: 21, totalPages: 2 }));
+    (Array.from(fixture.nativeElement.querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.includes('Siguiente'))!.click();
+    await fixture.whenStable();
+    listRequest().flush(makePage([], { page: 1, totalElements: 20, totalPages: 1 }));
+    await fixture.whenStable();
+    const back = listRequest();
+    expect(back.request.params.get('page')).toBe('0');
+    await flush(back, makePage([makeOffer()], { totalElements: 20, totalPages: 1 }));
+    expect(fixture.nativeElement.textContent).toContain('Java Developer');
+  });
 });

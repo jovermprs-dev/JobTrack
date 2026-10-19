@@ -10,7 +10,7 @@
     <div class="loading"><span class="spinner"></span> Cargando oferta…</div>
   } @else if (loadError()) {
     <div class="card empty">
-      <h3>No se pudo cargar la oferta</h3>
+      <h2>No se pudo cargar la oferta</h2>
       <p>{{ loadError() }}</p>
       <a class="btn" routerLink="/ofertas">Volver a las ofertas</a>
     </div>
@@ -40,7 +40,8 @@
           </div>
           <div class="field">
             <label for="location">Ubicación</label>
-            <input id="location" class="input" formControlName="location" [attr.aria-invalid]="invalidAttr('location')" />
+            <input id="location" class="input" formControlName="location" [attr.aria-invalid]="invalidAttr('location')" aria-describedby="loc-err" />
+            @if (err('location'); as m) { <span id="loc-err" class="error">{{ m }}</span> }
           </div>
           <div class="field">
             <label for="workMode">Modalidad</label>
@@ -51,12 +52,14 @@
           </div>
           <div class="field">
             <label for="contractType">Tipo de contrato</label>
-            <input id="contractType" class="input" formControlName="contractType" list="contract-options" />
+            <input id="contractType" class="input" formControlName="contractType" list="contract-options" [attr.aria-invalid]="invalidAttr('contractType')" aria-describedby="ct-err" />
+            @if (err('contractType'); as m) { <span id="ct-err" class="error">{{ m }}</span> }
             <datalist id="contract-options"><option value="Indefinido"></option><option value="Temporal"></option><option value="Prácticas"></option><option value="Autónomo / Freelance"></option></datalist>
           </div>
           <div class="field">
             <label for="workingHours">Jornada</label>
-            <input id="workingHours" class="input" formControlName="workingHours" list="hours-options" />
+            <input id="workingHours" class="input" formControlName="workingHours" list="hours-options" [attr.aria-invalid]="invalidAttr('workingHours')" aria-describedby="wh-err" />
+            @if (err('workingHours'); as m) { <span id="wh-err" class="error">{{ m }}</span> }
             <datalist id="hours-options"><option value="Completa"></option><option value="Parcial"></option><option value="Flexible"></option></datalist>
           </div>
         </div>
@@ -114,8 +117,9 @@
           </div>
           <div class="field">
             <label for="minYears">Experiencia mínima (años)</label>
-            <input id="minYears" class="input" type="number" min="0" max="60" step="0.5" formControlName="minYearsExperience" aria-describedby="years-hint" [attr.aria-invalid]="invalidAttr('minYearsExperience')" />
+            <input id="minYears" class="input" type="number" min="0" max="60" step="0.5" formControlName="minYearsExperience" aria-describedby="years-hint years-err" [attr.aria-invalid]="invalidAttr('minYearsExperience')" />
             <span id="years-hint" class="hint">0 significa «no se pide experiencia»; vacío, «no indicado».</span>
+            @if (err('minYearsExperience'); as m) { <span id="years-err" class="error">{{ m }}</span> }
           </div>
           <div class="field span-2">
             <label for="skills">Tecnologías y competencias requeridas</label>
@@ -129,16 +133,18 @@
         <div class="stack">
           <div class="field">
             <label for="description">Descripción</label>
-            <textarea id="description" class="input" formControlName="description" rows="6"></textarea>
-            @if (err('description'); as m) { <span class="error">{{ m }}</span> }
+            <textarea id="description" class="input" formControlName="description" rows="6" [attr.aria-invalid]="invalidAttr('description')" aria-describedby="desc-err"></textarea>
+            @if (err('description'); as m) { <span id="desc-err" class="error">{{ m }}</span> }
           </div>
           <div class="field">
             <label for="requirements">Requisitos</label>
-            <textarea id="requirements" class="input" formControlName="requirements" rows="4"></textarea>
+            <textarea id="requirements" class="input" formControlName="requirements" rows="4" [attr.aria-invalid]="invalidAttr('requirements')" aria-describedby="req-err"></textarea>
+            @if (err('requirements'); as m) { <span id="req-err" class="error">{{ m }}</span> }
           </div>
           <div class="field">
             <label for="notes">Observaciones personales</label>
-            <textarea id="notes" class="input" formControlName="notes" rows="3"></textarea>
+            <textarea id="notes" class="input" formControlName="notes" rows="3" [attr.aria-invalid]="invalidAttr('notes')" aria-describedby="notes-err"></textarea>
+            @if (err('notes'); as m) { <span id="notes-err" class="error">{{ m }}</span> }
           </div>
         </div>
       </fieldset>

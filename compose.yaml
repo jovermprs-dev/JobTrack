@@ -32,8 +32,8 @@ services:
       JOBTRACK_DB_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-jobtrack}
       JOBTRACK_DB_USER: ${POSTGRES_USER:-jobtrack}
       JOBTRACK_DB_PASSWORD: ${POSTGRES_PASSWORD}
-      # En local (http) debe ser false; tras HTTPS en un servidor, true (ver docs/deployment.md).
-      JOBTRACK_SECURE_COOKIES: ${JOBTRACK_SECURE_COOKIES:-false}
+      # Seguro por defecto (true). .env.example lo pone a false para uso local por http; ver docs/deployment.md.
+      JOBTRACK_SECURE_COOKIES: ${JOBTRACK_SECURE_COOKIES:-true}
     expose:
       - "8080"
 

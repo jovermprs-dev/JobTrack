@@ -74,7 +74,10 @@ export interface BarDatum {
   selector: 'app-bar-chart',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="bars" role="img" [attr.aria-label]="ariaLabel()" [style.grid-template-columns]="'repeat(' + data().length + ', minmax(0, 1fr))'">
+    <ul class="sr-only" [attr.aria-label]="ariaLabel()">
+      @for (d of data(); track $index) { <li>{{ d.label }}: {{ d.value }}</li> }
+    </ul>
+    <div class="bars" aria-hidden="true" [style.grid-template-columns]="'repeat(' + data().length + ', minmax(0, 1fr))'">
       @for (d of data(); track $index) {
         <div class="col" [title]="d.label + ': ' + d.value">
           <span class="val">{{ d.value || '' }}</span>

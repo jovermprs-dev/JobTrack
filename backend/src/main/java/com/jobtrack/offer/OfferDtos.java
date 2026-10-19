@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jobtrack.common.WorkMode;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -32,12 +33,12 @@ public final class OfferDtos {
             LocalDate publishedDate,
             LocalDate detectedDate,
             LocalDate appliedDate,
-            @DecimalMin(value = "0", message = "No puede ser negativo") @DecimalMax(value = "100000000", message = "Valor demasiado alto") BigDecimal salaryMin,
-            @DecimalMin(value = "0", message = "No puede ser negativo") @DecimalMax(value = "100000000", message = "Valor demasiado alto") BigDecimal salaryMax,
+            @DecimalMin(value = "0", message = "No puede ser negativo") @DecimalMax(value = "100000000", message = "Valor demasiado alto") @Digits(integer = 9, fraction = 2, message = "Máximo 2 decimales") BigDecimal salaryMin,
+            @DecimalMin(value = "0", message = "No puede ser negativo") @DecimalMax(value = "100000000", message = "Valor demasiado alto") @Digits(integer = 9, fraction = 2, message = "Máximo 2 decimales") BigDecimal salaryMax,
             @Pattern(regexp = "^[A-Za-z]{3}$", message = "Usa un código de 3 letras (EUR, USD…)") String currency,
             @Size(max = 80, message = "Máximo 80 caracteres") String contractType,
             @Size(max = 80, message = "Máximo 80 caracteres") String workingHours,
-            @DecimalMin(value = "0", message = "No puede ser negativo") @DecimalMax(value = "60", message = "Valor demasiado alto") BigDecimal minYearsExperience,
+            @DecimalMin(value = "0", message = "No puede ser negativo") @DecimalMax(value = "60", message = "Valor demasiado alto") @Digits(integer = 2, fraction = 1, message = "Máximo 1 decimal") BigDecimal minYearsExperience,
             @Size(max = 60, message = "Máximo 60 competencias") List<@NotBlank(message = "Competencia vacía") @Size(max = 80, message = "Competencia demasiado larga") String> skills,
             @Size(max = 20000, message = "Máximo 20000 caracteres") String requirements,
             @Size(max = 20000, message = "Máximo 20000 caracteres") String notes,

@@ -15,7 +15,7 @@ export class ToastService {
     this.push('success', message, 4000);
   }
   error(message: string): void {
-    this.push('error', message, 7000);
+    this.push('error', message, 0); // los errores permanecen hasta que se cierran
   }
   info(message: string): void {
     this.push('info', message, 4000);
@@ -27,6 +27,6 @@ export class ToastService {
   private push(kind: Toast['kind'], message: string, ms: number): void {
     const id = this.nextId++;
     this.toasts.update((list) => [...list, { id, kind, message }]);
-    setTimeout(() => this.dismiss(id), ms);
+    if (ms > 0) setTimeout(() => this.dismiss(id), ms);
   }
 }

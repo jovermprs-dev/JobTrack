@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, input, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { catchError, forkJoin, of } from 'rxjs';
 import { toApiError } from '../../core/api-error';
 import { ApiService } from '../../core/api.service';
 import { ConfirmService } from '../../core/confirm.service';
@@ -54,10 +54,11 @@ export class OfferDetailComponent implements OnInit {
   protected load(): void {
     this.loading.set(true);
     this.error.set(null);
+    // La oferta es imprescindible; el historial y la compatibilidad son secundarios y no deben ocultarla si fallan.
     forkJoin({
       offer: this.api.getOffer(this.id()),
-      history: this.api.history(this.id()),
-      compat: this.api.compatibility(this.id()),
+      history: this.api.history(this.id()).pipe(catchError(() => of([] as HistoryEntry[]))),
+      compat: this.api.compatibility(this.id()).pipe(catchError(() => of(null))),
     }).subscribe({
       next: ({ offer, history, compat }) => {
         this.offer.set(offer);
@@ -89,7 +90,7 @@ export class OfferDetailComponent implements OnInit {
         this.statusOpen.set(false);
         this.offer.set(offer);
         this.toast.success(`Estado actualizado: ${STATUS_LABELS[status]}`);
-        this.api.history(this.id()).subscribe((h) => this.history.set(h));
+        this.api.history(this.id()).subscribe({ next: (h) => this.history.set(h), error: () => this.toast.error('No se pudo recargar el historial.') });
       },
       error: (e) => {
         this.savingStatus.set(false);

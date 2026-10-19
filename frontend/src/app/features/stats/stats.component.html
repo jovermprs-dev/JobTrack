@@ -10,7 +10,7 @@
     <div class="loading"><span class="spinner"></span> Calculando estadísticas…</div>
   } @else if (error()) {
     <div class="card empty">
-      <h3>No se pudieron cargar las estadísticas</h3>
+      <h2>No se pudieron cargar las estadísticas</h2>
       <p>{{ error() }}</p>
       <button type="button" class="btn btn--primary" (click)="load()"><app-icon name="refresh" /> Reintentar</button>
     </div>

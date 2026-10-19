@@ -13,7 +13,7 @@ import { IconComponent } from '../../shared/icon.component';
   template: `
     <section class="aside" aria-hidden="true">
       <div class="brand"><span class="logo">J</span> JobTrack</div>
-      <h1>Tu búsqueda de empleo, bajo control.</h1>
+      <p class="tagline">Tu búsqueda de empleo, bajo control.</p>
       <p>Organiza ofertas, sigue cada candidatura y entiende cómo avanza tu búsqueda con datos reales.</p>
       <ul>
         <li><app-icon name="check" /> Estados e historial de cada candidatura</li>
@@ -21,10 +21,10 @@ import { IconComponent } from '../../shared/icon.component';
         <li><app-icon name="check" /> Estadísticas de tu búsqueda</li>
       </ul>
     </section>
-    <section class="panel">
+    <main class="panel">
       <form class="form stack" [formGroup]="form" (ngSubmit)="submit()" novalidate>
         <div>
-          <h2>Inicia sesión</h2>
+          <h1>Inicia sesión</h1>
           <p class="lead">Accede a tu panel de JobTrack.</p>
         </div>
 
@@ -54,7 +54,7 @@ import { IconComponent } from '../../shared/icon.component';
         <button type="submit" class="btn btn--primary" [disabled]="loading()">{{ loading() ? 'Entrando…' : 'Iniciar sesión' }}</button>
         <p class="swap small">¿No tienes cuenta? <a routerLink="/registro">Crear cuenta</a></p>
       </form>
-    </section>
+    </main>
   `,
 })
 export class LoginComponent {

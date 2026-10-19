@@ -75,6 +75,19 @@ class OfferIntegrationTest {
     }
 
     @Test
+    void numbersWithAbsurdScaleOrPrecisionAreRejectedInsteadOfExhaustingMemory() throws Exception {
+        TestApi user = newUser();
+        user.put("/api/v1/profile", Map.of("yearsExperience", 5)).andExpect(status().isOk());
+        user.post("/api/v1/offers", Map.of("title", "Dev", "company", "Acme", "minYearsExperience", new java.math.BigDecimal("1E-1500000000")))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors[*].field", hasItem("minYearsExperience")));
+        user.post("/api/v1/offers", Map.of("title", "Dev", "company", "Acme", "salaryMin", new java.math.BigDecimal("1.123")))
+                .andExpect(status().isBadRequest());
+        user.put("/api/v1/profile", Map.of("yearsExperience", new java.math.BigDecimal("1E-1500000000")))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void zeroIsDistinctFromUnknown() throws Exception {
         TestApi user = newUser();
         user.post("/api/v1/offers", Map.of("title", "Becario", "company", "Acme", "salaryMin", 0, "minYearsExperience", 0))

@@ -83,7 +83,7 @@ export class ProfileComponent implements OnInit {
   protected addLanguage(language = '', level = 'B2'): void {
     this.form.controls.languages.push(
       new FormGroup({
-        language: new FormControl(language, { nonNullable: true, validators: [Validators.required, Validators.maxLength(60)] }),
+        language: new FormControl(language, { nonNullable: true, validators: Validators.maxLength(60) }),
         level: new FormControl(level, { nonNullable: true, validators: Validators.required }),
       }),
     );

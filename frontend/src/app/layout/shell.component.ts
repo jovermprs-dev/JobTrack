@@ -9,6 +9,7 @@ import { IconComponent } from '../shared/icon.component';
   selector: 'app-shell',
   imports: [RouterOutlet, RouterLink, RouterLinkActive, IconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '(document:keydown.escape)': 'menuOpen.set(false)' },
   templateUrl: './shell.component.html',
   styleUrl: './shell.component.scss',
 })
@@ -25,9 +26,21 @@ export class ShellComponent {
   ];
 
   constructor() {
+    let first = true;
     inject(Router)
       .events.pipe(filter((e) => e instanceof NavigationEnd), takeUntilDestroyed())
-      .subscribe(() => this.menuOpen.set(false));
+      .subscribe(() => {
+        this.menuOpen.set(false);
+        // Tras cada navegación el foco pasa al contenido (accesibilidad con teclado y lectores de pantalla).
+        if (!first) document.getElementById('main')?.focus({ preventScroll: true });
+        first = false;
+      });
+  }
+
+  /** El ancla `#main` chocaría con `<base href="/">`: se gestiona el foco a mano. */
+  protected skip(event: Event): void {
+    event.preventDefault();
+    document.getElementById('main')?.focus();
   }
 
   protected logout(): void {

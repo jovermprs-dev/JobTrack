@@ -92,8 +92,8 @@ await step('4. Editar la oferta', async () => {
 });
 
 await step('5. Marcar favorita, verla en /favoritas y filtrar', async () => {
-  await page.getByRole('button', { name: /Marcar favorita/ }).click();
-  await page.getByRole('button', { name: 'Favorita' }).waitFor();
+  await page.getByRole('button', { name: 'Favorita', pressed: false }).click();
+  await page.getByRole('button', { name: 'Favorita', pressed: true }).waitFor();
   await page.goto(`${BASE}/favoritas`);
   await page.getByRole('link', { name: 'Senior Java Backend Developer' }).waitFor();
   await page.goto(`${BASE}/ofertas`);

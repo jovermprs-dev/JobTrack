@@ -52,4 +52,17 @@ describe('RegisterComponent', () => {
     fixture.detectChanges();
     expect(el.querySelector('[role="alert"]')?.textContent).toContain('Ya existe una cuenta');
   });
+
+  it('muestra el error del servidor junto al campo nombre cuando solo falla ese campo', () => {
+    const { fixture, el, http, fill, submit } = setup();
+    fill('   x', 'ana@example.com', 'una-contraseña-larga');
+    submit();
+    http.expectOne('/api/v1/auth/register').flush(
+      { detail: 'Los datos enviados no son válidos.', errors: [{ field: 'displayName', message: 'El nombre es obligatorio' }] },
+      { status: 400, statusText: 'Bad Request' },
+    );
+    fixture.detectChanges();
+    expect(el.querySelector('#name-err')?.textContent).toContain('El nombre es obligatorio');
+    expect(el.querySelector('#displayName')?.getAttribute('aria-invalid')).toBe('true');
+  });
 });

@@ -31,21 +31,21 @@ function matches(group: AbstractControl): ValidationErrors | null {
         <div class="field">
           <label for="current">Contraseña actual</label>
           <input id="current" class="input" type="password" formControlName="currentPassword" autocomplete="current-password"
-            [attr.aria-invalid]="bad('currentPassword')" />
-          @if (bad('currentPassword')) { <span class="error">Introduce tu contraseña actual.</span> }
+            [attr.aria-invalid]="bad('currentPassword')" aria-describedby="cur-err" />
+          @if (bad('currentPassword')) { <span id="cur-err" class="error">Introduce tu contraseña actual.</span> }
         </div>
         <div class="field">
           <label for="new">Nueva contraseña</label>
           <input id="new" class="input" type="password" formControlName="newPassword" autocomplete="new-password"
-            [attr.aria-invalid]="bad('newPassword')" aria-describedby="new-hint" />
+            [attr.aria-invalid]="bad('newPassword')" aria-describedby="new-hint new-err" />
           <span id="new-hint" class="hint">Entre 10 y 72 caracteres.</span>
-          @if (bad('newPassword')) { <span class="error">La contraseña debe tener entre 10 y 72 caracteres.</span> }
+          @if (bad('newPassword')) { <span id="new-err" class="error">La contraseña debe tener entre 10 y 72 caracteres.</span> }
         </div>
         <div class="field">
           <label for="confirm">Repite la nueva contraseña</label>
           <input id="confirm" class="input" type="password" formControlName="confirm" autocomplete="new-password"
-            [attr.aria-invalid]="mismatch() ? true : null" />
-          @if (mismatch()) { <span class="error">Las contraseñas no coinciden.</span> }
+            [attr.aria-invalid]="mismatch() ? true : null" aria-describedby="conf-err" />
+          @if (mismatch()) { <span id="conf-err" class="error">Las contraseñas no coinciden.</span> }
         </div>
         <div class="form-actions"><button type="submit" class="btn btn--primary" [disabled]="saving()">{{ saving() ? 'Guardando…' : 'Cambiar contraseña' }}</button></div>
       </form>

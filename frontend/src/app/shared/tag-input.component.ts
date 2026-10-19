@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, forwardRef, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, forwardRef, input, signal, viewChild } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { IconComponent } from './icon.component';
 
@@ -19,6 +19,7 @@ import { IconComponent } from './icon.component';
         </span>
       }
       <input
+        #field
         class="inp"
         [id]="inputId()"
         [placeholder]="tags().length ? '' : placeholder()"
@@ -36,7 +37,7 @@ import { IconComponent } from './icon.component';
       border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface); }
     .box:focus-within { outline: 2px solid var(--focus); border-color: var(--focus); }
     .box.disabled { background: var(--surface-2); }
-    .x { display: inline-flex; border: 0; background: transparent; padding: 2px; cursor: pointer; color: var(--text-muted); border-radius: 4px; }
+    .x { display: inline-flex; align-items: center; justify-content: center; min-width: 1.5rem; min-height: 1.5rem; border: 0; background: transparent; padding: 2px; cursor: pointer; color: var(--text-muted); border-radius: 4px; }
     .x:hover { color: var(--danger); background: var(--danger-soft); }
     .inp { flex: 1; min-width: 8rem; border: 0; outline: 0; background: transparent; padding: 0.35rem 0.25rem; }
   `,
@@ -47,6 +48,7 @@ export class TagInputComponent implements ControlValueAccessor {
   readonly describedBy = input<string | null>(null);
   readonly maxItems = input(60);
 
+  private readonly field = viewChild<ElementRef<HTMLInputElement>>('field');
   protected readonly tags = signal<string[]>([]);
   protected readonly draft = signal('');
   protected readonly disabled = signal(false);
@@ -98,6 +100,7 @@ export class TagInputComponent implements ControlValueAccessor {
 
   protected remove(tag: string): void {
     this.update(this.tags().filter((t) => t !== tag));
+    this.field()?.nativeElement.focus();
   }
 
   private update(next: string[]): void {

@@ -7,11 +7,12 @@ Docs: `docs/` (arquitectura, modelo de datos, API, seguridad). Progreso: `ROADMA
 
 ```bash
 export JAVA_HOME=/opt/homebrew/opt/openjdk@21 PATH=/opt/homebrew/opt/openjdk@21/bin:$PATH   # este equipo: java por defecto es 18
-docker compose up -d --build            # stack completo → http://localhost:8080 (nginx)
+docker compose up -d --build            # stack completo → http://localhost:8080 (nginx); requiere .env (cp .env.example .env)
 cd backend && ./mvnw verify             # compila + tests (Testcontainers requiere Docker en marcha)
 cd frontend && npm ci && npm test -- --watch=false && npm run build
-cd backend && ./mvnw spring-boot:run    # dev; necesita Postgres: docker compose up -d db
-cd frontend && npm start                # dev con proxy a :8080
+cd backend && ./mvnw spring-boot:run    # dev en :8081; necesita Postgres: docker compose up -d db (127.0.0.1:55432)
+cd frontend && npm start                # dev en :4200 con proxy /api → :8081
+cd e2e && npm test                      # E2E Playwright contra http://localhost:8080 (stack levantado)
 ```
 
 ## Convenciones
@@ -22,6 +23,11 @@ cd frontend && npm start                # dev con proxy a :8080
 - «Desconocido» = `NULL`; no confundir con `0`/`false`. No inventar datos.
 - Frontend: componentes standalone, signals, formularios reactivos, SCSS con variables de `styles/_tokens.scss`. Sin librerías de UI/gráficos (SVG propio).
 - Tests nuevos con cada funcionalidad; no desactivar ni borrar tests para que pase el build.
+
+## Estructura
+
+`backend/src/main/java/com/jobtrack/{auth,offer,profile,compatibility,stats,common,config}` · `frontend/src/app/{core,shared,layout,features}` · `docs/` · `e2e/` · `deploy/`.
+Tests de integración: `backend/src/test/.../support/TestApi` (flujo CSRF real). Docker Desktop: `open -a Docker`.
 
 ## Verificación mínima antes de dar algo por hecho
 

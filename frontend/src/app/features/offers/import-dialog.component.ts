@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, inject, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, input, output, signal, viewChild } from '@angular/core';
 import { toApiError } from '../../core/api-error';
 import { ApiService } from '../../core/api.service';
 import { ImportResult, STATUS_LABELS } from '../../core/models';
@@ -21,7 +21,7 @@ import { DialogComponent } from '../../shared/dialog.component';
 
       <div class="field">
         <label for="csv-file">Archivo CSV (UTF-8)</label>
-        <input id="csv-file" class="input" type="file" accept=".csv,text/csv" (change)="onFile($event)" />
+        <input #fileInput id="csv-file" class="input" type="file" accept=".csv,text/csv" (change)="onFile($event)" />
       </div>
 
       @if (busy()) {
@@ -91,6 +91,7 @@ export class ImportDialogComponent {
   protected readonly error = signal<string | null>(null);
   protected readonly result = signal<ImportResult | null>(null);
   private file: File | null = null;
+  private readonly fileInput = viewChild<ElementRef<HTMLInputElement>>('fileInput');
 
   protected canImport(): boolean {
     const r = this.result();
@@ -133,6 +134,8 @@ export class ImportDialogComponent {
 
   protected reset(): void {
     this.file = null;
+    const input = this.fileInput()?.nativeElement;
+    if (input) input.value = '';
     this.result.set(null);
     this.error.set(null);
     this.busy.set(false);

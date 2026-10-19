@@ -69,10 +69,11 @@
     </div>
   </form>
 
-  <section aria-live="polite" [attr.aria-busy]="loading()">
+  <section [attr.aria-busy]="loading()">
+    <p class="sr-only" role="status">{{ !loading() && result() ? result()!.totalElements + ' ofertas encontradas' : '' }}</p>
     @if (error()) {
       <div class="card empty">
-        <h3>No se pudieron cargar las ofertas</h3>
+        <h2>No se pudieron cargar las ofertas</h2>
         <p>{{ error() }}</p>
         <button type="button" class="btn btn--primary" (click)="retry()"><app-icon name="refresh" /> Reintentar</button>
       </div>
@@ -82,15 +83,15 @@
       @if (page.totalElements === 0) {
         <div class="card empty">
           @if (hasFilters()) {
-            <h3>Sin resultados</h3>
+            <h2>Sin resultados</h2>
             <p>Ninguna oferta coincide con los filtros aplicados.</p>
             <button type="button" class="btn" (click)="clearFilters()">Limpiar filtros</button>
           } @else if (favoritesOnly()) {
-            <h3>Aún no tienes favoritas</h3>
+            <h2>Aún no tienes favoritas</h2>
             <p>Marca una oferta con la estrella para tenerla siempre a mano.</p>
             <a class="btn btn--primary" routerLink="/ofertas">Ver todas las ofertas</a>
           } @else {
-            <h3>Todavía no has guardado ninguna oferta</h3>
+            <h2>Todavía no has guardado ninguna oferta</h2>
             <p>Añade la primera oferta que te interese o importa un CSV con las que ya tengas.</p>
             <a class="btn btn--primary" routerLink="/ofertas/nueva"><app-icon name="plus" /> Añadir oferta</a>
           }
@@ -122,7 +123,7 @@
               <div class="offer__side">
                 <app-status-badge [status]="o.status" />
                 <button type="button" class="btn btn--ghost btn--icon btn--sm" [attr.aria-pressed]="o.favorite"
-                  [attr.aria-label]="(o.favorite ? 'Quitar de favoritas: ' : 'Marcar como favorita: ') + o.title" (click)="toggleFavorite(o)">
+                  [attr.aria-label]="'Favorita: ' + o.title" (click)="toggleFavorite(o)">
                   <span class="star" [class.is-on]="o.favorite"><app-icon name="star" [filled]="o.favorite" [size]="20" /></span>
                 </button>
               </div>

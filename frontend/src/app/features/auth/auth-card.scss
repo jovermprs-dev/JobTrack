@@ -1,6 +1,6 @@
 :host { display: grid; min-height: 100vh; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 .aside { background: var(--sidebar-bg); color: #e6ebf3; padding: var(--s7); display: flex; flex-direction: column; justify-content: center; gap: var(--s5); }
-.aside h1 { color: #fff; font-size: 2.1rem; max-width: 24rem; }
+.aside .tagline { color: #fff; font-size: 2.1rem; font-weight: 650; line-height: 1.2; max-width: 24rem; }
 .aside p { color: var(--sidebar-text); max-width: 26rem; }
 .aside ul { display: grid; gap: var(--s3); color: var(--sidebar-text); }
 .aside li { display: flex; gap: var(--s3); align-items: center; }
@@ -9,7 +9,7 @@
 .logo { display: grid; place-items: center; width: 1.9rem; height: 1.9rem; border-radius: 8px; background: var(--primary); color: #fff; font-weight: 800; }
 .panel { display: grid; place-items: center; padding: var(--s5); }
 .form { width: min(24rem, 100%); }
-.form h2 { margin-bottom: var(--s1); }
+.form h1 { font-size: var(--fs-xl); margin-bottom: var(--s1); }
 .form .lead { color: var(--text-muted); margin-bottom: var(--s5); }
 .swap { margin-top: var(--s4); text-align: center; }
 @media (max-width: 860px) {

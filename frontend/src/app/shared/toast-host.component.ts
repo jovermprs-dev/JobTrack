@@ -7,9 +7,9 @@ import { IconComponent } from './icon.component';
   imports: [IconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="toasts" aria-live="polite" aria-atomic="false">
+    <div class="toasts" role="status" aria-live="polite" aria-atomic="false">
       @for (t of toasts.toasts(); track t.id) {
-        <div class="toast" [class]="'toast toast--' + t.kind" [attr.role]="t.kind === 'error' ? 'alert' : 'status'">
+        <div class="toast" [class]="'toast toast--' + t.kind">
           <app-icon [name]="t.kind === 'error' ? 'alert' : 'check'" />
           <span>{{ t.message }}</span>
           <button type="button" class="btn btn--ghost btn--sm btn--icon" aria-label="Cerrar notificación" (click)="toasts.dismiss(t.id)">

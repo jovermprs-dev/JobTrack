@@ -87,7 +87,14 @@ export class OfferListComponent implements OnInit {
       )
       .subscribe((page) => {
         this.loading.set(false);
-        if (page) this.result.set(page);
+        if (page) {
+          // Si la página pedida quedó vacía (p. ej. al quitar la última favorita de la última página), se retrocede.
+          if (page.content.length === 0 && page.totalElements > 0 && page.page > 0) {
+            this.goToPage(page.totalPages - 1);
+            return;
+          }
+          this.result.set(page);
+        }
       });
 
     this.form.valueChanges.pipe(debounceTime(300), takeUntilDestroyed(this.destroyRef)).subscribe(() => this.pushFilters());
@@ -108,13 +115,15 @@ export class OfferListComponent implements OnInit {
   }
 
   private syncForm(params: Params): void {
+    // Los campos de texto se guardan recortados en la URL: no se sobrescribe lo que se está escribiendo (espacios finales).
+    const keep = (control: FormControl<string>, value: string | undefined) => (control.value.trim() === (value ?? '') ? control.value : (value ?? ''));
     this.form.patchValue(
       {
-        q: params['q'] ?? '',
+        q: keep(this.form.controls.q, params['q']),
         status: params['status'] ?? '',
         workMode: params['workMode'] ?? '',
-        company: params['company'] ?? '',
-        location: params['location'] ?? '',
+        company: keep(this.form.controls.company, params['company']),
+        location: keep(this.form.controls.location, params['location']),
         favorite: params['favorite'] === 'true',
         sort: params['sort'] ?? SORTS[0].value,
       },

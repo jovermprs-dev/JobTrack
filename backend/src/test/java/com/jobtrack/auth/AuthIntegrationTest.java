@@ -165,6 +165,55 @@ class AuthIntegrationTest {
     }
 
     @Test
+    void changingPasswordEndsOtherSessionsButKeepsTheCurrentOne() throws Exception {
+        String email = email();
+        TestApi current = TestApi.register(mvc, json, email);
+        TestApi other = TestApi.anonymous(mvc, json);
+        other.useSessionFrom(other.post("/api/v1/auth/login", Map.of("email", email, "password", TestApi.PASSWORD)));
+        other.get("/api/v1/auth/me").andExpect(status().isOk());
+
+        current.put("/api/v1/auth/password", Map.of("currentPassword", TestApi.PASSWORD, "newPassword", "brand-new-password-1"))
+                .andExpect(status().isNoContent());
+
+        other.get("/api/v1/auth/me").andExpect(status().isUnauthorized());
+        current.get("/api/v1/auth/me").andExpect(status().isOk());
+    }
+
+    @Test
+    void guessingTheCurrentPasswordIsThrottled() throws Exception {
+        TestApi user = TestApi.register(mvc, json, email());
+        for (int i = 0; i < 5; i++) {
+            user.put("/api/v1/auth/password", Map.of("currentPassword", "wrong-guess-" + i, "newPassword", "brand-new-password-1"))
+                    .andExpect(status().isBadRequest());
+        }
+        user.put("/api/v1/auth/password", Map.of("currentPassword", TestApi.PASSWORD, "newPassword", "brand-new-password-1"))
+                .andExpect(status().isTooManyRequests());
+    }
+
+    @Test
+    void oversizedLoginFieldsAreRejectedBeforeTheyAreStored() throws Exception {
+        TestApi.anonymous(mvc, json)
+                .post("/api/v1/auth/login", Map.of("email", "a".repeat(300) + "@example.com", "password", "x".repeat(200)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void forgedForwardingHeadersDoNotBypassTheLoginThrottle() throws Exception {
+        String email = email();
+        TestApi.register(mvc, json, email);
+        TestApi anon = TestApi.anonymous(mvc, json);
+        for (int i = 0; i < 5; i++) {
+            anon.perform(post("/api/v1/auth/login").contentType(MediaType.APPLICATION_JSON)
+                            .header("Forwarded", "for=10.0.0." + i).header("X-Forwarded-For", "10.9.9." + i)
+                            .content("{\"email\":\"" + email + "\",\"password\":\"bad-password-" + i + "\"}"))
+                    .andExpect(status().isUnauthorized());
+        }
+        anon.perform(post("/api/v1/auth/login").contentType(MediaType.APPLICATION_JSON).header("Forwarded", "for=10.0.0.99")
+                        .content("{\"email\":\"" + email + "\",\"password\":\"bad-password-x\"}"))
+                .andExpect(status().isTooManyRequests());
+    }
+
+    @Test
     void privateEndpointsRequireAuthentication() throws Exception {
         TestApi anon = TestApi.anonymous(mvc, json);
         for (String url : new String[] {"/api/v1/offers", "/api/v1/profile", "/api/v1/stats"}) {

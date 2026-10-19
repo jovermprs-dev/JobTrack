@@ -20,12 +20,12 @@ public final class AuthDtos {
     }
 
     public record LoginRequest(
-            @NotBlank(message = "El email es obligatorio") String email,
-            @NotBlank(message = "La contraseña es obligatoria") String password) {
+            @NotBlank(message = "El email es obligatorio") @Size(max = 254, message = "El email es demasiado largo") String email,
+            @NotBlank(message = "La contraseña es obligatoria") @Size(max = 128, message = "La contraseña es demasiado larga") String password) {
     }
 
     public record ChangePasswordRequest(
-            @NotBlank(message = "La contraseña actual es obligatoria") String currentPassword,
+            @NotBlank(message = "La contraseña actual es obligatoria") @Size(max = 128, message = "La contraseña es demasiado larga") String currentPassword,
             @NotBlank(message = "La nueva contraseña es obligatoria")
             @Size(min = 10, max = 72, message = "La contraseña debe tener entre 10 y 72 caracteres") String newPassword) {
     }

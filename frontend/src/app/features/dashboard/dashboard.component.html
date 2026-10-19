@@ -14,7 +14,7 @@
     <div class="loading"><span class="spinner"></span> Cargando tu panel…</div>
   } @else if (error()) {
     <div class="card empty">
-      <h3>No se pudo cargar el panel</h3>
+      <h2>No se pudo cargar el panel</h2>
       <p>{{ error() }}</p>
       <button type="button" class="btn btn--primary" (click)="load()"><app-icon name="refresh" /> Reintentar</button>
     </div>

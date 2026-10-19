@@ -14,17 +14,17 @@ import { IconComponent } from '../../shared/icon.component';
   template: `
     <section class="aside" aria-hidden="true">
       <div class="brand"><span class="logo">J</span> JobTrack</div>
-      <h1>Empieza a ordenar tu búsqueda.</h1>
+      <p class="tagline">Empieza a ordenar tu búsqueda.</p>
       <p>Crea tu cuenta gratis. Tus datos son privados: solo tú puedes verlos.</p>
       <ul>
         <li><app-icon name="check" /> Sin servicios externos ni rastreo</li>
         <li><app-icon name="check" /> Exporta tus ofertas a CSV cuando quieras</li>
       </ul>
     </section>
-    <section class="panel">
+    <main class="panel">
       <form class="form stack" [formGroup]="form" (ngSubmit)="submit()" novalidate>
         <div>
-          <h2>Crea tu cuenta</h2>
+          <h1>Crea tu cuenta</h1>
           <p class="lead">Solo necesitas un email y una contraseña.</p>
         </div>
 
@@ -35,9 +35,11 @@ import { IconComponent } from '../../shared/icon.component';
         <div class="field">
           <label for="displayName">Nombre</label>
           <input id="displayName" class="input" formControlName="displayName" autocomplete="name" maxlength="100" required
-            [attr.aria-invalid]="invalid('displayName')" aria-describedby="name-err" />
+            [attr.aria-invalid]="invalid('displayName') || fieldError('displayName') ? true : null" aria-describedby="name-err" />
           @if (invalid('displayName')) {
             <span id="name-err" class="error">Indica tu nombre.</span>
+          } @else if (fieldError('displayName')) {
+            <span id="name-err" class="error">{{ fieldError('displayName') }}</span>
           }
         </div>
         <div class="field">
@@ -53,16 +55,18 @@ import { IconComponent } from '../../shared/icon.component';
         <div class="field">
           <label for="password">Contraseña</label>
           <input id="password" class="input" type="password" formControlName="password" autocomplete="new-password" required
-            [attr.aria-invalid]="invalid('password')" aria-describedby="pw-hint pw-err" />
+            [attr.aria-invalid]="invalid('password') || fieldError('password') ? true : null" aria-describedby="pw-hint pw-err" />
           <span id="pw-hint" class="hint">Entre 10 y 72 caracteres.</span>
           @if (invalid('password')) {
             <span id="pw-err" class="error">La contraseña debe tener entre 10 y 72 caracteres.</span>
+          } @else if (fieldError('password')) {
+            <span id="pw-err" class="error">{{ fieldError('password') }}</span>
           }
         </div>
         <button type="submit" class="btn btn--primary" [disabled]="loading()">{{ loading() ? 'Creando cuenta…' : 'Crear cuenta' }}</button>
         <p class="swap small">¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a></p>
       </form>
-    </section>
+    </main>
   `,
 })
 export class RegisterComponent {
@@ -105,7 +109,8 @@ export class RegisterComponent {
         this.loading.set(false);
         const err = toApiError(e);
         this.serverFields.set(err.fieldErrors);
-        this.error.set(err.status === 409 ? err.message : Object.keys(err.fieldErrors).length ? null : err.message);
+        const known = ['email', 'displayName', 'password'];
+        this.error.set(err.status === 409 || !Object.keys(err.fieldErrors).some((k) => known.includes(k)) ? err.message : null);
       },
     });
   }

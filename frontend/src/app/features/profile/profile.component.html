@@ -10,7 +10,7 @@
     <div class="loading"><span class="spinner"></span> Cargando perfil…</div>
   } @else if (loadError()) {
     <div class="card empty">
-      <h3>No se pudo cargar el perfil</h3>
+      <h2>No se pudo cargar el perfil</h2>
       <p>{{ loadError() }}</p>
       <button type="button" class="btn btn--primary" (click)="load()"><app-icon name="refresh" /> Reintentar</button>
     </div>
@@ -27,9 +27,9 @@
           </div>
           <div class="field">
             <label for="years">Años de experiencia</label>
-            <input id="years" class="input" type="number" min="0" max="60" step="0.5" formControlName="yearsExperience" [attr.aria-invalid]="bad('yearsExperience')" aria-describedby="years-hint" />
+            <input id="years" class="input" type="number" min="0" max="60" step="0.5" formControlName="yearsExperience" [attr.aria-invalid]="bad('yearsExperience')" aria-describedby="years-hint years-err" />
             <span id="years-hint" class="hint">Puedes usar medios años (2.5). Vacío = sin indicar.</span>
-            @if (bad('yearsExperience')) { <span class="error">Introduce un valor entre 0 y 60.</span> }
+            @if (bad('yearsExperience')) { <span id="years-err" class="error">Introduce un valor entre 0 y 60.</span> }
           </div>
           <div class="field span-2">
             <label for="summary">Experiencia profesional</label>
@@ -90,13 +90,13 @@
           </div>
           <div class="field">
             <label for="salary">Salario orientativo (bruto anual)</label>
-            <input id="salary" class="input" type="number" min="0" step="any" formControlName="expectedSalary" [attr.aria-invalid]="bad('expectedSalary')" />
-            @if (bad('expectedSalary')) { <span class="error">No puede ser negativo.</span> }
+            <input id="salary" class="input" type="number" min="0" step="any" formControlName="expectedSalary" [attr.aria-invalid]="bad('expectedSalary')" aria-describedby="sal-err" />
+            @if (bad('expectedSalary')) { <span id="sal-err" class="error">No puede ser negativo.</span> }
           </div>
           <div class="field">
             <label for="currency">Moneda</label>
-            <input id="currency" class="input" formControlName="salaryCurrency" maxlength="3" placeholder="EUR" [attr.aria-invalid]="bad('salaryCurrency')" />
-            @if (bad('salaryCurrency')) { <span class="error">Usa un código de 3 letras (EUR, USD…).</span> }
+            <input id="currency" class="input" formControlName="salaryCurrency" maxlength="3" placeholder="EUR" [attr.aria-invalid]="bad('salaryCurrency')" aria-describedby="cur-err" />
+            @if (bad('salaryCurrency')) { <span id="cur-err" class="error">Usa un código de 3 letras (EUR, USD…).</span> }
           </div>
           <div class="field span-2">
             <label for="prefs">Otras preferencias</label>
