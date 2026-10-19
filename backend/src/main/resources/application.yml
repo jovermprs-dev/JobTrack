@@ -1,0 +1,60 @@
+spring:
+  application:
+    name: jobtrack
+  datasource:
+    url: ${JOBTRACK_DB_URL:jdbc:postgresql://localhost:5433/jobtrack}
+    username: ${JOBTRACK_DB_USER:jobtrack}
+    password: ${JOBTRACK_DB_PASSWORD:jobtrack_dev_only}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        default_batch_fetch_size: 50
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+  session:
+    timeout: 8h
+    jdbc:
+      initialize-schema: never
+      cleanup-cron: "0 */10 * * * *"
+  jackson:
+    default-property-inclusion: always
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 2MB
+
+server:
+  port: ${SERVER_PORT:8081}
+  error:
+    include-message: never
+    include-stacktrace: never
+    include-binding-errors: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+      probes:
+        enabled: true
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+jobtrack:
+  security:
+    secure-cookies: ${JOBTRACK_SECURE_COOKIES:false}
+  auth:
+    max-failed-logins: 5
+    lockout-minutes: 15

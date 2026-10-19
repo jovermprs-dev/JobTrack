@@ -1,0 +1,20 @@
+# Perfil de producción: sin Swagger, cookie Secure por defecto, sin valores por defecto para la BD.
+spring:
+  datasource:
+    url: ${JOBTRACK_DB_URL}
+    username: ${JOBTRACK_DB_USER}
+    password: ${JOBTRACK_DB_PASSWORD}
+
+server:
+  port: ${SERVER_PORT:8080}
+  forward-headers-strategy: framework
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+jobtrack:
+  security:
+    secure-cookies: ${JOBTRACK_SECURE_COOKIES:true}
