@@ -1,0 +1,44 @@
+# Despliegue detrás de un Traefik compartido (VPS con varios proyectos). Traefik termina TLS y enruta por etiquetas,
+# así que NO se usa compose.prod.yaml (Caddy): ocuparía los puertos 80/443 que ya tiene Traefik. Uso:
+#   docker compose -f compose.yaml -f compose.traefik.yaml up -d --build
+# Requiere la red externa `web` de Traefik (docker network create web) y en .env: JOBTRACK_DOMAIN,
+# JOBTRACK_SECURE_COOKIES=true y JOBTRACK_BIND=127.0.0.1 (el puerto publicado solo queda en loopback).
+services:
+  db:
+    mem_limit: 384m
+
+  backend:
+    mem_limit: 640m   # JAVA_TOOL_OPTIONS usa MaxRAMPercentage=75: el heap se ajusta a este límite
+
+  frontend:
+    mem_limit: 64m
+    networks:
+      - default   # para llegar al backend
+      - web       # para que Traefik llegue al frontend
+    labels:
+      - "traefik.enable=true"
+      # El contenedor está en dos redes: Traefik debe usar la compartida, no la interna del proyecto.
+      - "traefik.docker.network=web"
+      - "traefik.http.services.jobtrack.loadbalancer.server.port=8080"
+
+      - "traefik.http.routers.jobtrack.rule=Host(`${JOBTRACK_DOMAIN:?Define JOBTRACK_DOMAIN en .env}`)"
+      - "traefik.http.routers.jobtrack.entrypoints=websecure"
+      - "traefik.http.routers.jobtrack.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.jobtrack.middlewares=jobtrack-hsts"
+
+      # El registro es abierto y cada alta cuesta CPU de BCrypt (docs/security-and-config.md): se limita por IP.
+      # La regla más larga tiene prioridad sobre la del router principal.
+      - "traefik.http.routers.jobtrack-register.rule=Host(`${JOBTRACK_DOMAIN}`) && Path(`/api/auth/register`)"
+      - "traefik.http.routers.jobtrack-register.entrypoints=websecure"
+      - "traefik.http.routers.jobtrack-register.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.jobtrack-register.service=jobtrack"
+      - "traefik.http.routers.jobtrack-register.middlewares=jobtrack-hsts,jobtrack-register-limit"
+
+      - "traefik.http.middlewares.jobtrack-hsts.headers.stsSeconds=31536000"
+      - "traefik.http.middlewares.jobtrack-register-limit.ratelimit.average=5"
+      - "traefik.http.middlewares.jobtrack-register-limit.ratelimit.period=1m"
+      - "traefik.http.middlewares.jobtrack-register-limit.ratelimit.burst=5"
+
+networks:
+  web:
+    external: true

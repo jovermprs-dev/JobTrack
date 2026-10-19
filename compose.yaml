@@ -36,6 +36,12 @@ services:
       JOBTRACK_SECURE_COOKIES: ${JOBTRACK_SECURE_COOKIES:-true}
     expose:
       - "8080"
+    networks:
+      default:
+        aliases:
+          # Nombre propio: si el frontend comparte red con otros proyectos (Traefik), «backend» podría
+          # resolver al contenedor de otro proyecto. nginx.conf usa este alias.
+          - jobtrack-backend
 
   frontend:
     build: ./frontend

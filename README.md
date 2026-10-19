@@ -61,7 +61,7 @@ frontend/   SPA Angular + nginx (sirve la SPA y reenvía /api)
 e2e/        Recorridos de aceptación con Playwright
 docs/       Arquitectura, modelo de datos, API, seguridad, algoritmo, pruebas, despliegue
 deploy/     Caddyfile para HTTPS en un VPS
-compose.yaml · compose.prod.yaml · .env.example · .github/workflows/ci.yml
+compose.yaml · compose.prod.yaml (Caddy) · compose.traefik.yaml (Traefik compartido) · .env.example · .github/workflows/ci.yml
 ```
 
 ## Documentación
