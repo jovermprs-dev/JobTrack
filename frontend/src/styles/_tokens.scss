@@ -1,0 +1,67 @@
+// Tokens de diseño de JobTrack. Todo el color, espaciado y tipografía sale de aquí.
+:root {
+  color-scheme: light;
+
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --surface-2: #f0f2f5;
+  --border: #e1e5eb;
+  --border-strong: #c8cfda;
+  --text: #141a24;
+  --text-muted: #566075;
+  --text-faint: #6b7487;
+
+  --primary: #0f766e;
+  --primary-hover: #0b5f59;
+  --primary-soft: #e3f3f1;
+  --on-primary: #ffffff;
+  --danger: #b42318;
+  --danger-hover: #912018;
+  --danger-soft: #fdeceb;
+  --success: #166534;
+  --success-soft: #e0f5e7;
+  --warning: #8a5300;
+  --warning-soft: #fff3d4;
+  --star: #d97706;
+  --focus: #0f766e;
+
+  --sidebar-bg: #0f172a;
+  --sidebar-text: #c3cddd;
+  --sidebar-active: rgba(255, 255, 255, 0.09);
+
+  // Estados de candidatura: fondo, texto y punto/gráfico
+  --st-saved-bg: #eceff3;            --st-saved-fg: #2f3a4d;            --st-saved: #64748b;
+  --st-pending_to_apply-bg: #fff1cc; --st-pending_to_apply-fg: #6b4200; --st-pending_to_apply: #d99100;
+  --st-applied-bg: #e0ecff;          --st-applied-fg: #1b3a99;          --st-applied: #3b82f6;
+  --st-in_process-bg: #ece3ff;       --st-in_process-fg: #54229e;       --st-in_process: #8b5cf6;
+  --st-interview-bg: #d6f2ee;        --st-interview-fg: #0a554f;        --st-interview: #14a394;
+  --st-offer_received-bg: #d9f4e1;   --st-offer_received-fg: #14532b;   --st-offer_received: #22a050;
+  --st-rejected-bg: #fde3e0;         --st-rejected-fg: #8f1d1d;         --st-rejected: #e0463d;
+  --st-withdrawn-bg: #efe8e2;        --st-withdrawn-fg: #553a2c;        --st-withdrawn: #a8806a;
+
+  --font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.8125rem;
+  --fs-base: 0.9375rem;
+  --fs-lg: 1.0625rem;
+  --fs-xl: 1.375rem;
+  --fs-2xl: 1.75rem;
+
+  --s1: 0.25rem;
+  --s2: 0.5rem;
+  --s3: 0.75rem;
+  --s4: 1rem;
+  --s5: 1.5rem;
+  --s6: 2rem;
+  --s7: 3rem;
+
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06);
+  --shadow: 0 1px 3px rgba(16, 24, 40, 0.08), 0 1px 2px rgba(16, 24, 40, 0.04);
+  --shadow-lg: 0 12px 32px rgba(16, 24, 40, 0.18);
+
+  --sidebar-w: 15.5rem;
+  --topbar-h: 3.5rem;
+}

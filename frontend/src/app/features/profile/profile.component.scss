@@ -1,0 +1,5 @@
+.narrow { max-width: 52rem; }
+fieldset.card { padding: var(--s4) var(--s5) var(--s5); }
+.langs { display: grid; gap: var(--s2); margin-bottom: var(--s2); }
+.lang { display: grid; grid-template-columns: minmax(0, 1fr) 7rem auto; gap: var(--s2); align-items: center; }
+.add { margin-top: var(--s1); }

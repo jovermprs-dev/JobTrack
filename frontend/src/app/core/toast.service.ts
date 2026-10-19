@@ -1,0 +1,32 @@
+import { Injectable, signal } from '@angular/core';
+
+export interface Toast {
+  id: number;
+  kind: 'success' | 'error' | 'info';
+  message: string;
+}
+
+@Injectable({ providedIn: 'root' })
+export class ToastService {
+  private nextId = 1;
+  readonly toasts = signal<Toast[]>([]);
+
+  success(message: string): void {
+    this.push('success', message, 4000);
+  }
+  error(message: string): void {
+    this.push('error', message, 7000);
+  }
+  info(message: string): void {
+    this.push('info', message, 4000);
+  }
+  dismiss(id: number): void {
+    this.toasts.update((list) => list.filter((t) => t.id !== id));
+  }
+
+  private push(kind: Toast['kind'], message: string, ms: number): void {
+    const id = this.nextId++;
+    this.toasts.update((list) => [...list, { id, kind, message }]);
+    setTimeout(() => this.dismiss(id), ms);
+  }
+}

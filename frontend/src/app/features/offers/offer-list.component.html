@@ -1,0 +1,138 @@
+<div class="page">
+  <header class="page-header">
+    <div>
+      <h1>{{ favoritesOnly() ? 'Ofertas favoritas' : 'Ofertas' }}</h1>
+      <p>{{ favoritesOnly() ? 'Las ofertas que has marcado como favoritas.' : 'Todas las ofertas que sigues, con sus candidaturas.' }}</p>
+    </div>
+    <div class="page-header__actions">
+      @if (!favoritesOnly()) {
+        <button type="button" class="btn" (click)="importOpen.set(true)"><app-icon name="upload" /> Importar CSV</button>
+        <button type="button" class="btn" [disabled]="exporting()" (click)="exportCsv()"><app-icon name="download" /> Exportar CSV</button>
+      }
+      <a class="btn btn--primary" routerLink="/ofertas/nueva"><app-icon name="plus" /> Nueva oferta</a>
+    </div>
+  </header>
+
+  <form class="card filters" [formGroup]="form" role="search" aria-label="Filtrar ofertas" (submit)="$event.preventDefault()">
+    <div class="filters__top">
+    <div class="field search">
+      <label for="f-q">Buscar</label>
+      <div class="search__box">
+        <app-icon name="search" />
+        <input id="f-q" class="input" type="search" formControlName="q" placeholder="Puesto, empresa, descripción o tecnología" />
+      </div>
+    </div>
+    <div class="field sort">
+      <label for="f-sort">Ordenar por</label>
+      <select id="f-sort" class="input" formControlName="sort">
+        @for (s of sorts; track s.value) {
+          <option [value]="s.value">{{ s.label }}</option>
+        }
+      </select>
+    </div>
+    </div>
+    @if (!favoritesOnly()) {
+      <div class="field">
+        <label for="f-status">Estado</label>
+        <select id="f-status" class="input" formControlName="status">
+          <option value="">Todos</option>
+          @for (s of statuses; track s) {
+            <option [value]="s">{{ statusLabels[s] }}</option>
+          }
+        </select>
+      </div>
+    }
+    <div class="field">
+      <label for="f-mode">Modalidad</label>
+      <select id="f-mode" class="input" formControlName="workMode">
+        <option value="">Todas</option>
+        @for (m of workModes; track m) {
+          <option [value]="m">{{ workModeLabels[m] }}</option>
+        }
+      </select>
+    </div>
+    <div class="field">
+      <label for="f-company">Empresa</label>
+      <input id="f-company" class="input" formControlName="company" />
+    </div>
+    <div class="field">
+      <label for="f-location">Ubicación</label>
+      <input id="f-location" class="input" formControlName="location" />
+    </div>
+    <div class="filters__foot">
+      @if (!favoritesOnly()) {
+        <label class="check"><input type="checkbox" formControlName="favorite" /> Solo favoritas</label>
+      }
+      @if (hasFilters()) {
+        <button type="button" class="btn btn--ghost btn--sm" (click)="clearFilters()"><app-icon name="x" [size]="16" /> Limpiar filtros</button>
+      }
+    </div>
+  </form>
+
+  <section aria-live="polite" [attr.aria-busy]="loading()">
+    @if (error()) {
+      <div class="card empty">
+        <h3>No se pudieron cargar las ofertas</h3>
+        <p>{{ error() }}</p>
+        <button type="button" class="btn btn--primary" (click)="retry()"><app-icon name="refresh" /> Reintentar</button>
+      </div>
+    } @else if (loading() && !result()) {
+      <div class="loading"><span class="spinner"></span> Cargando ofertas…</div>
+    } @else if (result(); as page) {
+      @if (page.totalElements === 0) {
+        <div class="card empty">
+          @if (hasFilters()) {
+            <h3>Sin resultados</h3>
+            <p>Ninguna oferta coincide con los filtros aplicados.</p>
+            <button type="button" class="btn" (click)="clearFilters()">Limpiar filtros</button>
+          } @else if (favoritesOnly()) {
+            <h3>Aún no tienes favoritas</h3>
+            <p>Marca una oferta con la estrella para tenerla siempre a mano.</p>
+            <a class="btn btn--primary" routerLink="/ofertas">Ver todas las ofertas</a>
+          } @else {
+            <h3>Todavía no has guardado ninguna oferta</h3>
+            <p>Añade la primera oferta que te interese o importa un CSV con las que ya tengas.</p>
+            <a class="btn btn--primary" routerLink="/ofertas/nueva"><app-icon name="plus" /> Añadir oferta</a>
+          }
+        </div>
+      } @else {
+        <ul class="list" [class.stale]="loading()">
+          @for (o of page.content; track o.id) {
+            <li class="offer card">
+              <app-score-ring [score]="o.compatibilityScore" [size]="46" />
+              <div class="offer__main">
+                <h2 class="offer__title"><a [routerLink]="['/ofertas', o.id]">{{ o.title }}</a></h2>
+                <p class="offer__meta">
+                  <strong>{{ o.company }}</strong>
+                  @if (o.location) { <span class="muted">· {{ o.location }}</span> }
+                  @if (o.workMode) { <span class="badge badge--plain">{{ workModeLabels[o.workMode] }}</span> }
+                </p>
+                @if (o.skills.length) {
+                  <ul class="chips">
+                    @for (s of o.skills.slice(0, 5); track s) { <li class="chip">{{ s }}</li> }
+                    @if (o.skills.length > 5) { <li class="chip">+{{ o.skills.length - 5 }}</li> }
+                  </ul>
+                }
+                <p class="muted small">
+                  Guardada el {{ date(o.detectedDate) }}
+                  @if (o.appliedDate) { · Enviada el {{ date(o.appliedDate) }} }
+                  @if (salary(o); as sal) { · {{ sal }} }
+                </p>
+              </div>
+              <div class="offer__side">
+                <app-status-badge [status]="o.status" />
+                <button type="button" class="btn btn--ghost btn--icon btn--sm" [attr.aria-pressed]="o.favorite"
+                  [attr.aria-label]="(o.favorite ? 'Quitar de favoritas: ' : 'Marcar como favorita: ') + o.title" (click)="toggleFavorite(o)">
+                  <span class="star" [class.is-on]="o.favorite"><app-icon name="star" [filled]="o.favorite" [size]="20" /></span>
+                </button>
+              </div>
+            </li>
+          }
+        </ul>
+        <app-pagination [page]="page.page" [size]="page.size" [totalElements]="page.totalElements" [totalPages]="page.totalPages" (pageChange)="goToPage($event)" />
+      }
+    }
+  </section>
+</div>
+
+<app-import-dialog [open]="importOpen()" (closed)="importOpen.set(false)" (imported)="onImported()" />

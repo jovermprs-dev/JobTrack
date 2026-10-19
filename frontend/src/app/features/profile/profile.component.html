@@ -1,0 +1,113 @@
+<div class="page narrow">
+  <header class="page-header">
+    <div>
+      <h1>Perfil profesional</h1>
+      <p>Con estos datos se calcula la compatibilidad de cada oferta. Todo es opcional: lo que dejes en blanco se trata como «desconocido», nunca como una carencia.</p>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="loading"><span class="spinner"></span> Cargando perfil…</div>
+  } @else if (loadError()) {
+    <div class="card empty">
+      <h3>No se pudo cargar el perfil</h3>
+      <p>{{ loadError() }}</p>
+      <button type="button" class="btn btn--primary" (click)="load()"><app-icon name="refresh" /> Reintentar</button>
+    </div>
+  } @else {
+    <form class="stack" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      @if (formError()) { <div class="alert alert--error" role="alert">{{ formError() }}</div> }
+
+      <fieldset class="card">
+        <legend>Formación y experiencia</legend>
+        <div class="form-grid">
+          <div class="field">
+            <label for="degree">Titulación</label>
+            <input id="degree" class="input" formControlName="degree" [attr.aria-invalid]="bad('degree')" />
+          </div>
+          <div class="field">
+            <label for="years">Años de experiencia</label>
+            <input id="years" class="input" type="number" min="0" max="60" step="0.5" formControlName="yearsExperience" [attr.aria-invalid]="bad('yearsExperience')" aria-describedby="years-hint" />
+            <span id="years-hint" class="hint">Puedes usar medios años (2.5). Vacío = sin indicar.</span>
+            @if (bad('yearsExperience')) { <span class="error">Introduce un valor entre 0 y 60.</span> }
+          </div>
+          <div class="field span-2">
+            <label for="summary">Experiencia profesional</label>
+            <textarea id="summary" class="input" rows="5" formControlName="experienceSummary"></textarea>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="card">
+        <legend>Competencias e idiomas</legend>
+        <div class="stack">
+          <div class="field">
+            <label for="skills">Tecnologías y competencias</label>
+            <app-tag-input inputId="skills" formControlName="skills" placeholder="Java, Angular, SQL… (Enter para añadir)" />
+            <span class="hint">Se comparan con las que pide cada oferta, sin distinguir mayúsculas, tildes ni separadores (Node.js = nodejs).</span>
+          </div>
+          <div>
+            <p class="label">Idiomas</p>
+            <div formArrayName="languages" class="langs">
+              @for (g of form.controls.languages.controls; track $index; let i = $index) {
+                <div class="lang" [formGroupName]="i">
+                  <div class="field">
+                    <label [for]="'lang-' + i" class="sr-only">Idioma {{ i + 1 }}</label>
+                    <input [id]="'lang-' + i" class="input" formControlName="language" placeholder="Idioma (p. ej. Inglés)" />
+                  </div>
+                  <div class="field">
+                    <label [for]="'lvl-' + i" class="sr-only">Nivel del idioma {{ i + 1 }}</label>
+                    <select [id]="'lvl-' + i" class="input" formControlName="level">
+                      @for (l of levels; track l) { <option [value]="l">{{ l }}</option> }
+                    </select>
+                  </div>
+                  <button type="button" class="btn btn--ghost btn--icon" [attr.aria-label]="'Quitar idioma ' + (i + 1)" (click)="removeLanguage(i)"><app-icon name="trash" /></button>
+                </div>
+              }
+            </div>
+            <button type="button" class="btn btn--sm add" (click)="addLanguage()"><app-icon name="plus" [size]="16" /> Añadir idioma</button>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="card">
+        <legend>Qué buscas</legend>
+        <div class="form-grid">
+          <div class="field span-2">
+            <label for="roles">Puestos deseados</label>
+            <app-tag-input inputId="roles" formControlName="desiredRoles" placeholder="Backend Developer, Full Stack… (Enter para añadir)" [maxItems]="20" />
+          </div>
+          <div class="field">
+            <label for="location">Ubicación</label>
+            <input id="location" class="input" formControlName="location" />
+          </div>
+          <div class="field">
+            <label for="mode">Modalidad preferida</label>
+            <select id="mode" class="input" formControlName="preferredWorkMode">
+              <option value="">Sin preferencia</option>
+              @for (m of workModes; track m) { <option [value]="m">{{ workModeLabels[m] }}</option> }
+            </select>
+          </div>
+          <div class="field">
+            <label for="salary">Salario orientativo (bruto anual)</label>
+            <input id="salary" class="input" type="number" min="0" step="any" formControlName="expectedSalary" [attr.aria-invalid]="bad('expectedSalary')" />
+            @if (bad('expectedSalary')) { <span class="error">No puede ser negativo.</span> }
+          </div>
+          <div class="field">
+            <label for="currency">Moneda</label>
+            <input id="currency" class="input" formControlName="salaryCurrency" maxlength="3" placeholder="EUR" [attr.aria-invalid]="bad('salaryCurrency')" />
+            @if (bad('salaryCurrency')) { <span class="error">Usa un código de 3 letras (EUR, USD…).</span> }
+          </div>
+          <div class="field span-2">
+            <label for="prefs">Otras preferencias</label>
+            <textarea id="prefs" class="input" rows="3" formControlName="preferences"></textarea>
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn--primary" [disabled]="saving()"><app-icon name="check" /> {{ saving() ? 'Guardando…' : 'Guardar perfil' }}</button>
+      </div>
+    </form>
+  }
+</div>

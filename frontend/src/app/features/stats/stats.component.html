@@ -1,0 +1,91 @@
+<div class="page">
+  <header class="page-header">
+    <div>
+      <h1>Estadísticas</h1>
+      <p>Cómo avanza tu búsqueda, calculado con tus datos reales.</p>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="loading"><span class="spinner"></span> Calculando estadísticas…</div>
+  } @else if (error()) {
+    <div class="card empty">
+      <h3>No se pudieron cargar las estadísticas</h3>
+      <p>{{ error() }}</p>
+      <button type="button" class="btn btn--primary" (click)="load()"><app-icon name="refresh" /> Reintentar</button>
+    </div>
+  } @else if (stats(); as s) {
+    @if (s.totals.saved === 0) {
+      <section class="card empty">
+        <h2>Aún no hay datos que analizar</h2>
+        <p>Guarda ofertas y actualiza el estado de tus candidaturas para ver aquí tus estadísticas.</p>
+        <a class="btn btn--primary" routerLink="/ofertas/nueva"><app-icon name="plus" /> Añadir oferta</a>
+      </section>
+    } @else {
+      <div class="grid grid--2">
+        <section class="card" aria-labelledby="rate-h">
+          <h2 id="rate-h" class="h">Tasa de respuesta</h2>
+          @if (rate() === null) {
+            <p class="big">—</p>
+            <p class="muted">Todavía no has enviado ninguna candidatura, así que no hay tasa que calcular.</p>
+          } @else {
+            <p class="big">{{ rate() }}%</p>
+            <p>
+              {{ s.responseRate.responded }} de {{ s.responseRate.applied }}
+              {{ s.responseRate.applied === 1 ? 'candidatura enviada ha recibido' : 'candidaturas enviadas han recibido' }} respuesta.
+            </p>
+            @if (!s.responseRate.sufficientData) {
+              <div class="alert alert--info top" role="note">Con menos de 5 candidaturas enviadas este porcentaje es poco fiable: un solo caso cambia mucho el resultado.</div>
+            }
+          }
+          <p class="muted small top">
+            <strong>Cómo se calcula:</strong> candidaturas enviadas (con fecha de solicitud) que han llegado alguna vez a «Proceso de selección», «Entrevista», «Oferta recibida» o «Rechazada», dividido entre todas las candidaturas enviadas. «Retirada» no cuenta como respuesta.
+          </p>
+        </section>
+
+        <section class="card" aria-labelledby="nums-h">
+          <h2 id="nums-h" class="h">Resultados</h2>
+          <dl class="nums">
+            <div><dt>Entrevistas</dt><dd>{{ s.totals.interviews }}</dd></div>
+            <div><dt>Ofertas recibidas</dt><dd>{{ s.totals.offersReceived }}</dd></div>
+            <div><dt>Candidaturas enviadas</dt><dd>{{ s.totals.applied }}</dd></div>
+            <div>
+              <dt>Compatibilidad media</dt>
+              <dd>{{ s.averageCompatibility.value === null ? '—' : s.averageCompatibility.value + '/100' }}</dd>
+              <dd class="muted small sub">{{ s.averageCompatibility.offersScored }} de {{ s.totals.saved }} {{ s.totals.saved === 1 ? 'oferta con puntuación' : 'ofertas con puntuación' }}</dd>
+            </div>
+          </dl>
+        </section>
+      </div>
+
+      <div class="grid grid--2 sect">
+        <section class="card" aria-labelledby="st-h">
+          <h2 id="st-h" class="h">Candidaturas por estado</h2>
+          <app-hbar-list [data]="byStatus()" />
+        </section>
+        <section class="card" aria-labelledby="co-h">
+          <h2 id="co-h" class="h">Empresas con más candidaturas</h2>
+          @if (companies().length === 0) {
+            <p class="muted">Aparecerán cuando envíes candidaturas.</p>
+          } @else {
+            <app-hbar-list [data]="companies()" />
+          }
+        </section>
+      </div>
+
+      <section class="card sect" aria-labelledby="time-h">
+        <div class="card__title"><h2 id="time-h">Evolución de solicitudes</h2><span class="muted small">Candidaturas enviadas por semana, últimas 12 semanas</span></div>
+        @if (totalWeekly() === 0) {
+          <p class="muted">No hay candidaturas enviadas en este periodo.</p>
+        } @else {
+          <app-bar-chart [data]="weekly()" ariaLabel="Candidaturas enviadas por semana durante las últimas 12 semanas" />
+        }
+      </section>
+
+      <section class="card sect" aria-labelledby="act-h">
+        <h2 id="act-h" class="h">Actividad reciente</h2>
+        <app-activity-list [items]="s.recentActivity" />
+      </section>
+    }
+  }
+</div>

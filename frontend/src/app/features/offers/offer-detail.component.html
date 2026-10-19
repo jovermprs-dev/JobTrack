@@ -1,0 +1,155 @@
+<div class="page">
+  @if (loading()) {
+    <div class="loading"><span class="spinner"></span> Cargando oferta…</div>
+  } @else if (error()) {
+    <div class="card empty">
+      <h3>No se pudo cargar la oferta</h3>
+      <p>{{ error() }}</p>
+      <div class="row center">
+        <button type="button" class="btn btn--primary" (click)="load()"><app-icon name="refresh" /> Reintentar</button>
+        <a class="btn" routerLink="/ofertas">Volver a las ofertas</a>
+      </div>
+    </div>
+  } @else if (offer(); as o) {
+    <nav aria-label="Migas de pan" class="crumbs small"><a routerLink="/ofertas">Ofertas</a> <span aria-hidden="true">/</span> <span>{{ o.title }}</span></nav>
+
+    <header class="page-header">
+      <div>
+        <h1>{{ o.title }}</h1>
+        <p class="meta">
+          <strong>{{ o.company }}</strong>
+          @if (o.location) { <span class="muted">· {{ o.location }}</span> }
+          @if (o.workMode) { <span class="badge badge--plain">{{ workModeLabels[o.workMode] }}</span> }
+        </p>
+      </div>
+      <div class="page-header__actions">
+        <button type="button" class="btn" [attr.aria-pressed]="o.favorite" (click)="toggleFavorite()">
+          <span class="star" [class.is-on]="o.favorite"><app-icon name="star" [filled]="o.favorite" /></span>
+          {{ o.favorite ? 'Favorita' : 'Marcar favorita' }}
+        </button>
+        <a class="btn" [routerLink]="['/ofertas', o.id, 'editar']"><app-icon name="edit" /> Editar</a>
+        <button type="button" class="btn btn--danger" (click)="remove()"><app-icon name="trash" /> Eliminar</button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <div class="stack">
+        <section class="card" aria-labelledby="status-h">
+          <div class="card__title">
+            <h2 id="status-h">Estado de la candidatura</h2>
+            <button type="button" class="btn btn--primary btn--sm" (click)="openStatus()"><app-icon name="refresh" [size]="16" /> Cambiar estado</button>
+          </div>
+          <div class="row"><app-status-badge [status]="o.status" />
+            @if (o.appliedDate) { <span class="muted small">Enviada el {{ date(o.appliedDate) }}</span> }
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="info-h">
+          <h2 id="info-h" class="card__h">Información</h2>
+          <dl class="facts">
+            <div><dt>Guardada</dt><dd>{{ date(o.detectedDate) }}</dd></div>
+            <div><dt>Publicada</dt><dd>{{ date(o.publishedDate) }}</dd></div>
+            <div><dt>Salario</dt><dd>{{ salary() ?? 'No indicado' }}</dd></div>
+            <div><dt>Contrato</dt><dd>{{ o.contractType ?? 'No indicado' }}</dd></div>
+            <div><dt>Jornada</dt><dd>{{ o.workingHours ?? 'No indicada' }}</dd></div>
+            <div><dt>Experiencia mínima</dt><dd>{{ o.minYearsExperience === null ? 'No indicada' : o.minYearsExperience === 0 ? 'No se pide' : o.minYearsExperience + ' años' }}</dd></div>
+          </dl>
+          @if (o.url) {
+            <a class="btn btn--sm link" [href]="o.url" target="_blank" rel="noopener noreferrer"><app-icon name="external" [size]="16" /> Ver oferta original</a>
+          }
+          @if (o.skills.length) {
+            <h3 class="sub">Tecnologías y competencias</h3>
+            <ul class="chips">@for (s of o.skills; track s) { <li class="chip">{{ s }}</li> }</ul>
+          }
+        </section>
+
+        @if (o.description) {
+          <section class="card"><h2 class="card__h">Descripción</h2><p class="prose">{{ o.description }}</p></section>
+        }
+        @if (o.requirements) {
+          <section class="card"><h2 class="card__h">Requisitos</h2><p class="prose">{{ o.requirements }}</p></section>
+        }
+        @if (o.notes) {
+          <section class="card"><h2 class="card__h">Observaciones personales</h2><p class="prose">{{ o.notes }}</p></section>
+        }
+      </div>
+
+      <div class="stack">
+        <section class="card" aria-labelledby="compat-h">
+          <h2 id="compat-h" class="card__h">Compatibilidad con tu perfil</h2>
+          @if (compat(); as c) {
+            <div class="score">
+              <app-score-ring [score]="c.score" [size]="72" />
+              <p>
+                @if (c.score !== null) { <strong class="big">{{ c.score }}/100</strong> }
+                @else { <strong>Información insuficiente</strong> }
+              </p>
+            </div>
+            <ul class="dims">
+              @for (d of c.dimensions; track d.key) {
+                <li>
+                  <div class="dim__head"><span>{{ d.label }} <span class="muted small">(peso {{ d.weight }})</span></span>
+                    <span class="small">{{ d.available ? pct(d.earned) + '%' : 'sin datos' }}</span></div>
+                  <div class="bar" aria-hidden="true"><span [style.width.%]="d.available ? pct(d.earned) : 0"></span></div>
+                  <p class="muted small">{{ d.detail }}</p>
+                </li>
+              }
+            </ul>
+            @if (c.positives.length) {
+              <h3 class="sub">A tu favor</h3>
+              <ul class="notes ok">@for (p of c.positives; track p) { <li><app-icon name="check" [size]="16" /> {{ p }}</li> }</ul>
+            }
+            @if (c.missing.length) {
+              <h3 class="sub">No acreditado en tu perfil</h3>
+              <ul class="notes bad">@for (m of c.missing; track m) { <li><app-icon name="alert" [size]="16" /> {{ m }}</li> }</ul>
+            }
+            @if (c.unknown.length) {
+              <h3 class="sub">Información desconocida</h3>
+              <ul class="notes">@for (u of c.unknown; track u) { <li>{{ u }}</li> }</ul>
+              <a routerLink="/perfil" class="small">Completa tu perfil profesional</a>
+            }
+            <p class="muted small disclaimer">{{ c.disclaimer }}</p>
+          }
+        </section>
+
+        <section class="card" aria-labelledby="hist-h">
+          <h2 id="hist-h" class="card__h">Historial de estados</h2>
+          <ol class="timeline">
+            @for (h of history(); track h.id) {
+              <li>
+                <div class="row tl__row">
+                  @if (h.fromStatus) { <app-status-badge [status]="h.fromStatus" /> <span class="sr-only">pasa a</span><span aria-hidden="true">→</span> }
+                  @else { <span class="muted small">Creada como</span> }
+                  <app-status-badge [status]="h.toStatus" />
+                </div>
+                <p class="muted small">{{ dateTime(h.changedAt) }}</p>
+                @if (h.note) { <p class="note">{{ h.note }}</p> }
+              </li>
+            }
+          </ol>
+        </section>
+      </div>
+    </div>
+
+    <app-dialog [open]="statusOpen()" labelledBy="status-title" (closed)="statusOpen.set(false)">
+      <h2 id="status-title">Cambiar estado</h2>
+      <form class="stack top" [formGroup]="statusForm" (ngSubmit)="saveStatus()">
+        @if (statusError()) { <div class="alert alert--error" role="alert">{{ statusError() }}</div> }
+        <div class="field">
+          <label for="new-status">Nuevo estado</label>
+          <select id="new-status" class="input" formControlName="status">
+            @for (s of selectableStatuses(); track s) { <option [value]="s">{{ statusLabels[s] }}</option> }
+          </select>
+        </div>
+        <div class="field">
+          <label for="status-note">Nota (opcional)</label>
+          <textarea id="status-note" class="input" rows="3" maxlength="1000" formControlName="note" placeholder="Ej.: entrevista técnica el jueves con el equipo de datos"></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn" (click)="statusOpen.set(false)">Cancelar</button>
+          <button type="submit" class="btn btn--primary" [disabled]="savingStatus()">{{ savingStatus() ? 'Guardando…' : 'Guardar' }}</button>
+        </div>
+      </form>
+    </app-dialog>
+  }
+</div>

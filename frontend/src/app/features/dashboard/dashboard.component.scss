@@ -1,0 +1,9 @@
+.center { justify-content: center; }
+.sect { margin-top: var(--s4); }
+.kpi { padding: var(--s4); }
+.kpi__label { font-size: var(--fs-sm); font-weight: 600; color: var(--text-muted); }
+.kpi__value { font-size: 2.25rem; font-weight: 700; line-height: 1.15; letter-spacing: -0.02em; margin-block: var(--s1); }
+.compat { display: grid; gap: var(--s3); }
+.compat li { display: flex; align-items: center; gap: var(--s3); }
+.compat a { display: grid; text-decoration: none; color: var(--text); min-width: 0; }
+.compat a:hover strong { color: var(--primary); text-decoration: underline; }

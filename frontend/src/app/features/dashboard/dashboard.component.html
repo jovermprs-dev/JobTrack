@@ -1,0 +1,82 @@
+<div class="page">
+  <header class="page-header">
+    <div>
+      <h1>Hola, {{ auth.user()?.displayName }}</h1>
+      <p>Este es el estado actual de tu búsqueda de empleo.</p>
+    </div>
+    <div class="page-header__actions">
+      <a class="btn" routerLink="/ofertas" [queryParams]="{ status: 'APPLIED' }"><app-icon name="refresh" /> Actualizar candidatura</a>
+      <a class="btn btn--primary" routerLink="/ofertas/nueva"><app-icon name="plus" /> Nueva oferta</a>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="loading"><span class="spinner"></span> Cargando tu panel…</div>
+  } @else if (error()) {
+    <div class="card empty">
+      <h3>No se pudo cargar el panel</h3>
+      <p>{{ error() }}</p>
+      <button type="button" class="btn btn--primary" (click)="load()"><app-icon name="refresh" /> Reintentar</button>
+    </div>
+  } @else if (stats(); as s) {
+    @if (s.totals.saved === 0) {
+      <section class="card empty">
+        <h2>Empieza guardando tu primera oferta</h2>
+        <p>Tu panel se llenará con métricas reales en cuanto añadas ofertas y vayas actualizando su estado.</p>
+        <div class="row center">
+          <a class="btn btn--primary" routerLink="/ofertas/nueva"><app-icon name="plus" /> Añadir oferta</a>
+          <a class="btn" routerLink="/perfil">Completar mi perfil</a>
+        </div>
+      </section>
+    } @else {
+      <section class="grid grid--kpi" aria-label="Resumen">
+        @for (k of kpis(); track k.label) {
+          <div class="card kpi">
+            <p class="kpi__label">{{ k.label }}</p>
+            <p class="kpi__value">{{ k.value }}</p>
+            <p class="muted small">{{ k.hint }}</p>
+          </div>
+        }
+      </section>
+
+      <div class="grid grid--2 sect">
+        <section class="card" aria-labelledby="by-status">
+          <div class="card__title"><h2 id="by-status">Candidaturas por estado</h2></div>
+          <app-donut-chart [slices]="slices()" centerLabel="ofertas" />
+        </section>
+
+        <section class="card" aria-labelledby="over-time">
+          <div class="card__title"><h2 id="over-time">Candidaturas enviadas por semana</h2><span class="muted small">Últimas 12 semanas</span></div>
+          @if (totalApplications12w() === 0) {
+            <p class="muted">Todavía no has enviado candidaturas en las últimas 12 semanas. Cuando pases una oferta a «Candidatura enviada» aparecerá aquí.</p>
+          } @else {
+            <app-bar-chart [data]="weekly()" ariaLabel="Candidaturas enviadas por semana durante las últimas 12 semanas" />
+          }
+        </section>
+      </div>
+
+      <div class="grid grid--2 sect">
+        <section class="card" aria-labelledby="top-compat">
+          <div class="card__title"><h2 id="top-compat">Mejor compatibilidad</h2><a class="small" routerLink="/ofertas" [queryParams]="{ sort: 'compatibilityScore,desc' }">Ver todas</a></div>
+          @if (s.topCompatible.length === 0) {
+            <p class="muted">Aún no hay compatibilidades calculadas. <a routerLink="/perfil">Completa tu perfil</a> (competencias, años de experiencia, puestos) y añade competencias a tus ofertas.</p>
+          } @else {
+            <ul class="compat">
+              @for (o of s.topCompatible; track o.id) {
+                <li>
+                  <app-score-ring [score]="o.score" [size]="40" />
+                  <a [routerLink]="['/ofertas', o.id]"><strong>{{ o.title }}</strong><span class="muted small">{{ o.company }}</span></a>
+                </li>
+              }
+            </ul>
+          }
+        </section>
+
+        <section class="card" aria-labelledby="recent">
+          <div class="card__title"><h2 id="recent">Actividad reciente</h2></div>
+          <app-activity-list [items]="s.recentActivity" />
+        </section>
+      </div>
+    }
+  }
+</div>

@@ -1,0 +1,33 @@
+.crumbs { margin-bottom: var(--s3); color: var(--text-muted); display: flex; gap: var(--s2); }
+.meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2); }
+.layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: var(--s4); align-items: start; }
+@media (max-width: 960px) { .layout { grid-template-columns: 1fr; } }
+.card__h { font-size: var(--fs-lg); margin-bottom: var(--s3); }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: var(--s3) var(--s4); margin: 0 0 var(--s4); }
+.facts dt { font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; }
+.facts dd { margin: 0; }
+.sub { font-size: var(--fs-sm); text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); margin: var(--s4) 0 var(--s2); }
+.chips { display: flex; flex-wrap: wrap; gap: var(--s1); }
+.prose { white-space: pre-wrap; overflow-wrap: anywhere; }
+.link { margin-bottom: var(--s2); }
+.center { justify-content: center; }
+.top { margin-top: var(--s3); }
+
+.score { display: flex; align-items: center; gap: var(--s4); margin-bottom: var(--s4); }
+.big { font-size: var(--fs-xl); }
+.dims { display: grid; gap: var(--s3); }
+.dim__head { display: flex; justify-content: space-between; gap: var(--s2); font-size: var(--fs-sm); font-weight: 550; }
+.bar { height: 6px; background: var(--surface-2); border-radius: 999px; margin: 4px 0; overflow: hidden; }
+.bar span { display: block; height: 100%; background: var(--primary); border-radius: 999px; }
+.notes { display: grid; gap: var(--s2); font-size: var(--fs-sm); }
+.notes li { display: flex; gap: var(--s2); align-items: flex-start; }
+.notes.ok app-icon { color: var(--success); margin-top: 2px; }
+.notes.bad app-icon { color: var(--warning); margin-top: 2px; }
+.disclaimer { margin-top: var(--s4); border-top: 1px solid var(--border); padding-top: var(--s3); }
+
+.timeline { display: grid; gap: var(--s4); border-left: 2px solid var(--border); margin-left: 6px; padding-left: var(--s4); }
+.timeline li { position: relative; }
+.timeline li::before { content: ''; position: absolute; left: calc(-1 * var(--s4) - 7px); top: 6px; width: 10px; height: 10px; border-radius: 50%;
+  background: var(--surface); border: 2px solid var(--primary); }
+.tl__row { gap: var(--s2); }
+.note { margin-top: var(--s1); background: var(--surface-2); padding: var(--s2) var(--s3); border-radius: var(--radius-sm); font-size: var(--fs-sm); overflow-wrap: anywhere; }

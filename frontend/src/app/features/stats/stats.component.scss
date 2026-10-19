@@ -1,0 +1,8 @@
+.h { font-size: var(--fs-lg); margin-bottom: var(--s3); }
+.big { font-size: 3rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: var(--s2); }
+.top { margin-top: var(--s3); }
+.sect { margin-top: var(--s4); }
+.nums { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s4); margin: 0; }
+.nums dt { font-size: var(--fs-sm); color: var(--text-muted); font-weight: 600; }
+.nums dd { margin: 0; font-size: var(--fs-xl); font-weight: 700; }
+.nums dd.sub { font-size: var(--fs-xs); font-weight: 400; }

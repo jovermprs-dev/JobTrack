@@ -1,0 +1,44 @@
+<a class="skip-link" href="#main">Saltar al contenido</a>
+
+<header class="topbar">
+  <button type="button" class="btn btn--ghost btn--icon menu-btn" aria-controls="sidebar" [attr.aria-expanded]="menuOpen()"
+    aria-label="Abrir menú de navegación" (click)="menuOpen.set(!menuOpen())">
+    <app-icon [name]="menuOpen() ? 'x' : 'menu'" [size]="22" />
+  </button>
+  <a class="brand brand--bar" routerLink="/dashboard"><span class="logo">J</span> JobTrack</a>
+</header>
+
+@if (menuOpen()) {
+  <div class="scrim" (click)="menuOpen.set(false)" aria-hidden="true"></div>
+}
+
+<aside id="sidebar" class="sidebar" [class.open]="menuOpen()">
+  <a class="brand" routerLink="/dashboard"><span class="logo">J</span> JobTrack</a>
+
+  <nav aria-label="Principal">
+    <ul>
+      @for (item of nav; track item.path) {
+        <li>
+          <a [routerLink]="item.path" routerLinkActive="active" ariaCurrentWhenActive="page">
+            <app-icon [name]="item.icon" /> {{ item.label }}
+          </a>
+        </li>
+      }
+    </ul>
+  </nav>
+
+  <div class="account">
+    <a class="who" routerLink="/cuenta" routerLinkActive="active" ariaCurrentWhenActive="page" aria-label="Mi cuenta">
+      <span class="avatar" aria-hidden="true">{{ auth.user()?.displayName?.charAt(0)?.toUpperCase() }}</span>
+      <span class="who__text">
+        <strong class="truncate">{{ auth.user()?.displayName }}</strong>
+        <span class="truncate small">{{ auth.user()?.email }}</span>
+      </span>
+    </a>
+    <button type="button" class="logout" (click)="logout()"><app-icon name="logout" /> Cerrar sesión</button>
+  </div>
+</aside>
+
+<main id="main" class="main" tabindex="-1">
+  <router-outlet />
+</main>

@@ -1,0 +1,154 @@
+<div class="page narrow">
+  <header class="page-header">
+    <div>
+      <h1>{{ editing() ? 'Editar oferta' : 'Nueva oferta' }}</h1>
+      <p>Solo el puesto y la empresa son obligatorios. Lo que no sepas, déjalo en blanco: no se inventa ningún dato.</p>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="loading"><span class="spinner"></span> Cargando oferta…</div>
+  } @else if (loadError()) {
+    <div class="card empty">
+      <h3>No se pudo cargar la oferta</h3>
+      <p>{{ loadError() }}</p>
+      <a class="btn" routerLink="/ofertas">Volver a las ofertas</a>
+    </div>
+  } @else {
+    <form class="stack" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      @if (formError()) {
+        <div class="alert alert--error" role="alert">{{ formError() }}</div>
+      }
+
+      <fieldset class="card">
+        <legend>Oferta</legend>
+        <div class="form-grid">
+          <div class="field">
+            <label for="title">Puesto *</label>
+            <input id="title" class="input" formControlName="title" required [attr.aria-invalid]="invalidAttr('title')" aria-describedby="title-err" />
+            @if (err('title'); as m) { <span id="title-err" class="error">{{ m }}</span> }
+          </div>
+          <div class="field">
+            <label for="company">Empresa *</label>
+            <input id="company" class="input" formControlName="company" required [attr.aria-invalid]="invalidAttr('company')" aria-describedby="company-err" />
+            @if (err('company'); as m) { <span id="company-err" class="error">{{ m }}</span> }
+          </div>
+          <div class="field span-2">
+            <label for="url">URL de la oferta</label>
+            <input id="url" class="input" type="url" formControlName="url" placeholder="https://…" [attr.aria-invalid]="invalidAttr('url')" aria-describedby="url-err" />
+            @if (err('url'); as m) { <span id="url-err" class="error">{{ m }}</span> }
+          </div>
+          <div class="field">
+            <label for="location">Ubicación</label>
+            <input id="location" class="input" formControlName="location" [attr.aria-invalid]="invalidAttr('location')" />
+          </div>
+          <div class="field">
+            <label for="workMode">Modalidad</label>
+            <select id="workMode" class="input" formControlName="workMode">
+              <option value="">Sin indicar</option>
+              @for (m of workModes; track m) { <option [value]="m">{{ workModeLabels[m] }}</option> }
+            </select>
+          </div>
+          <div class="field">
+            <label for="contractType">Tipo de contrato</label>
+            <input id="contractType" class="input" formControlName="contractType" list="contract-options" />
+            <datalist id="contract-options"><option value="Indefinido"></option><option value="Temporal"></option><option value="Prácticas"></option><option value="Autónomo / Freelance"></option></datalist>
+          </div>
+          <div class="field">
+            <label for="workingHours">Jornada</label>
+            <input id="workingHours" class="input" formControlName="workingHours" list="hours-options" />
+            <datalist id="hours-options"><option value="Completa"></option><option value="Parcial"></option><option value="Flexible"></option></datalist>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="card">
+        <legend>Fechas y estado</legend>
+        <div class="form-grid">
+          <div class="field">
+            <label for="publishedDate">Fecha de publicación</label>
+            <input id="publishedDate" class="input" type="date" formControlName="publishedDate" />
+          </div>
+          <div class="field">
+            <label for="detectedDate">Fecha en que la guardaste</label>
+            <input id="detectedDate" class="input" type="date" formControlName="detectedDate" />
+          </div>
+          <div class="field">
+            <label for="appliedDate">Fecha de solicitud</label>
+            <input id="appliedDate" class="input" type="date" formControlName="appliedDate" aria-describedby="applied-hint" />
+            <span id="applied-hint" class="hint">Se rellena sola al pasar la oferta a «Candidatura enviada».</span>
+          </div>
+          @if (!editing()) {
+            <div class="field">
+              <label for="status">Estado inicial</label>
+              <select id="status" class="input" formControlName="status">
+                @for (s of statuses; track s) { <option [value]="s">{{ statusLabels[s] }}</option> }
+              </select>
+            </div>
+          }
+        </div>
+        @if (editing()) {
+          <p class="muted small">El estado se cambia desde el detalle de la oferta para que quede registrado en el historial.</p>
+        }
+      </fieldset>
+
+      <fieldset class="card">
+        <legend>Salario y requisitos</legend>
+        <div class="form-grid">
+          <div class="field">
+            <label for="salaryMin">Salario mínimo (bruto anual)</label>
+            <input id="salaryMin" class="input" type="number" min="0" step="any" formControlName="salaryMin" [attr.aria-invalid]="invalidAttr('salaryMin')" aria-describedby="smin-err" />
+            @if (err('salaryMin'); as m) { <span id="smin-err" class="error">{{ m }}</span> }
+          </div>
+          <div class="field">
+            <label for="salaryMax">Salario máximo</label>
+            <input id="salaryMax" class="input" type="number" min="0" step="any" formControlName="salaryMax" [attr.aria-invalid]="invalidAttr('salaryMax') || (salaryRangeError ? true : null)" aria-describedby="smax-err" />
+            @if (err('salaryMax'); as m) { <span id="smax-err" class="error">{{ m }}</span> }
+            @else if (salaryRangeError) { <span id="smax-err" class="error">El mínimo no puede superar al máximo.</span> }
+          </div>
+          <div class="field">
+            <label for="currency">Moneda</label>
+            <input id="currency" class="input" formControlName="currency" maxlength="3" placeholder="EUR" list="currency-options" [attr.aria-invalid]="invalidAttr('currency')" aria-describedby="cur-err" />
+            <datalist id="currency-options"><option value="EUR"></option><option value="USD"></option><option value="GBP"></option></datalist>
+            @if (err('currency'); as m) { <span id="cur-err" class="error">{{ m }}</span> }
+          </div>
+          <div class="field">
+            <label for="minYears">Experiencia mínima (años)</label>
+            <input id="minYears" class="input" type="number" min="0" max="60" step="0.5" formControlName="minYearsExperience" aria-describedby="years-hint" [attr.aria-invalid]="invalidAttr('minYearsExperience')" />
+            <span id="years-hint" class="hint">0 significa «no se pide experiencia»; vacío, «no indicado».</span>
+          </div>
+          <div class="field span-2">
+            <label for="skills">Tecnologías y competencias requeridas</label>
+            <app-tag-input inputId="skills" formControlName="skills" placeholder="Java, Angular, SQL… (Enter para añadir)" />
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="card">
+        <legend>Detalles</legend>
+        <div class="stack">
+          <div class="field">
+            <label for="description">Descripción</label>
+            <textarea id="description" class="input" formControlName="description" rows="6"></textarea>
+            @if (err('description'); as m) { <span class="error">{{ m }}</span> }
+          </div>
+          <div class="field">
+            <label for="requirements">Requisitos</label>
+            <textarea id="requirements" class="input" formControlName="requirements" rows="4"></textarea>
+          </div>
+          <div class="field">
+            <label for="notes">Observaciones personales</label>
+            <textarea id="notes" class="input" formControlName="notes" rows="3"></textarea>
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="form-actions">
+        <a class="btn" [routerLink]="editing() ? ['/ofertas', editing()!.id] : '/ofertas'">Cancelar</a>
+        <button type="submit" class="btn btn--primary" [disabled]="saving()">
+          <app-icon name="check" /> {{ saving() ? 'Guardando…' : editing() ? 'Guardar cambios' : 'Crear oferta' }}
+        </button>
+      </div>
+    </form>
+  }
+</div>

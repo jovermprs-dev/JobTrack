@@ -26,3 +26,7 @@ frontend/out-tsc/
 
 # Misc
 .claude/settings.local.json
+
+# E2E
+e2e/node_modules/
+e2e/test-results/

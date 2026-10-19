@@ -6,7 +6,7 @@ import java.util.Map;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.AbstractMockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -73,7 +73,7 @@ public final class TestApi {
         return perform(MockMvcRequestBuilders.delete(url));
     }
 
-    public ResultActions perform(MockHttpServletRequestBuilder request) throws Exception {
+    public ResultActions perform(AbstractMockHttpServletRequestBuilder<?> request) throws Exception {
         if (session != null) {
             request.cookie(session);
         }
